@@ -7,3 +7,5 @@ getwd()
 #import .csv file
 creditData <- read.csv("LCdata.csv", header = TRUE, sep =",")
 creditData
+
+#another comment
