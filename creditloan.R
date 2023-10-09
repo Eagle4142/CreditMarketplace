@@ -9,3 +9,6 @@ creditData <- read.csv("LCdata.csv", header = TRUE, sep =",")
 creditData
 
 #another comment
+
+#easy calculations
+4+4
