@@ -19,3 +19,5 @@ str(creditData)
 
 #get summary statistics of data
 summary(creditData)
+
+#new Test Serhat
