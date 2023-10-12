@@ -26,3 +26,4 @@ creditDataSerhat <- subset(creditDataSerhat,select=-c(inq_last_12m,total_cu_tl,i
                                                       open_acc_6m,dti_joint,annual_inc_joint,mths_since_last_major_derog,
                                                       mths_since_last_record,mths_since_last_delinq))
 creditDataSerhat
+str(creditDataSerhat)

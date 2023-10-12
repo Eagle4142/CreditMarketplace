@@ -28,4 +28,8 @@ creditData2 <- subset(creditData,select=-c(inq_last_12m,total_cu_tl,inq_fi,total
                                                       open_acc_6m,dti_joint,annual_inc_joint,mths_since_last_major_derog,
                                                       mths_since_last_record,mths_since_last_delinq))
 
-creditData2
+creditData3 <- subset(creditData2,select=-c(collection_recovery_fee,installment,issue_d,last_pymnt_amnt,
+                                                      last_pym))
+
+summary(creditData2)
+cor(creditData)
