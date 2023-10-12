@@ -20,4 +20,4 @@ str(creditData)
 #get summary statistics of data
 summary(creditData)
 
-#new Test Serhatnewnewdwdqsqswswnew
+#new Test Serhatnewnewdwdqsqswswnewlk
