@@ -29,7 +29,9 @@ creditData2 <- subset(creditData,select=-c(inq_last_12m,total_cu_tl,inq_fi,total
                                                       mths_since_last_record,mths_since_last_delinq))
 
 creditData3 <- subset(creditData2,select=-c(collection_recovery_fee,installment,issue_d,last_pymnt_amnt,
-                                                      last_pym))
+                                                      last_pymnt_d,loan_status,next_pymnt_d,out_prncp,out_prncp_inv,
+                                                      pymnt_plan,recoveries,term,total_pymnt,total_pymnt_inv,total_rec_int,
+                                                      total_rec_late_fee,total_rec_prncp))
 
 summary(creditData2)
 cor(creditData)
