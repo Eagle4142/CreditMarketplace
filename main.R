@@ -35,3 +35,4 @@ creditData3 <- subset(creditData2,select=-c(collection_recovery_fee,installment,
                                                       total_rec_late_fee,total_rec_prncp))
 
 summary(creditData3)
+creditData3
