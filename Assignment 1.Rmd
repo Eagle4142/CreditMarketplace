@@ -1,0 +1,98 @@
+---
+title: "Assignment 1"
+author: David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br> 
+date: "`r Sys.time()`"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Business Understanding
+
+Text **to follow** here.
+
+# Setup
+## Load Required Packages
+
+First of all we are going to load the packages required for this project.
+
+```{r message = FALSE, warning = FALSE}
+#install.packages("readr")
+#install.packages("tidyverse")
+#install.packages("formattable")
+library(readr)
+library(tidyverse)
+library(formattable)
+```
+
+
+## Load Data
+
+Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
+
+```{r message = FALSE, warning = FALSE}
+creditData <- read_delim("LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+knitr::kable(head(creditData, 1))
+```
+
+# Explore Data
+## Attribute addr_state
+
+Display a summary of the attribute **addr_state**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$addr_state)
+```
+
+Plot the distribution of the attribute **addr_state**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$addr_state))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+
+table(creditData$addr_state)
+```
+
+**Conclusion**:
+
+We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
+
+## Attribute annual_inc
+
+Display a summary of the attribute **annual_inc**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$annual_inc)
+```
+
+Plot a historgram for **annual_inc**, where the annual income is higher than 500'000:
+
+```{r message = FALSE, warning = FALSE}
+hist((filter(creditData, annual_inc > 500000)$annual_inc), breaks = 1000)
+```
+
+
+
+As can be seen in the histogram, there are a few very high values, so we want to see if these are errors in our dataset. Therefore we are going to list the **emp_title** and **verification_status** for the top 50 values.
+
+```{r message = FALSE, warning = FALSE}
+
+select(head(creditData[order(creditData$annual_inc, decreasing = TRUE), ], 50), annual_inc, emp_title, verification_status)
+```
+
+Looks like there are indeed some unrealistic values in our dataset: A nurse with an annual income of USD 9.5 million or a commercial driver with USD 8.9 million seems to be way above the expected income, although source was verified.
+
+**Conclusion**:
+
+We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
+
+## ...
