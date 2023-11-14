@@ -1,10 +1,10 @@
 ---
 title: "Assignment 1"
-author: David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br> 
+author: "David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br>"
 date: "`r Sys.time()`"
 output:
   github_document:
-    toc: true
+    toc: yes
     toc_depth: 3
 ---
 
@@ -24,10 +24,8 @@ First of all we are going to load the packages required for this project.
 ```{r message = FALSE, warning = FALSE}
 #install.packages("readr")
 #install.packages("tidyverse")
-#install.packages("formattable")
 library(readr)
 library(tidyverse)
-library(formattable)
 ```
 
 
@@ -58,7 +56,6 @@ plot(table(creditData$addr_state))
 Build a contingency table of the counts at each combination of factor levels.
 
 ```{r message = FALSE, warning = FALSE}
-
 table(creditData$addr_state)
 ```
 
@@ -95,4 +92,47 @@ Looks like there are indeed some unrealistic values in our dataset: A nurse with
 
 We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
 
-## ...
+## Attribute application_type
+
+Display a summary of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$application_type)
+```
+
+Plot the distribution of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$application_type))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$application_type)
+```
+
+**Conclusion**:
+
+The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value.
+
+
+## Attribute collections_12_mths_ex_med
+
+## Attribute delinq_2yrs
+
+## Attribute dti
+
+## Attribute earliest_cr_line
+
+## Attribute emp_length
+
+## Attribute funded_amnt
+
+## Attribute funded_amnt_inv
+
+## Attribute home_ownership
+
+## Attribute initial_list_status
+
+## Attribute ...
