@@ -126,6 +126,89 @@ table(creditData$application_type)
 The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value.
 
 
+## Attribute verification_status
+
+Display a summary of the attribute **verification_status**:
+
+```{r message = FALSE, warning = FALSE}
+count(creditData[is.na(creditData$verification_status), ])
+class(creditData$verification_status)
+```
+Factorize the character value
+
+```{r message = FALSE, warning = FALSE}
+vec_Verif <- as.factor(creditData$verification_status)
+class(vec_Verif)
+```
+
+## Attribute open_acc
+
+Display the attribute open_acc
+```{r message = FALSE, warning = FALSE}
+summary(creditData$open_acc)
+```
+
+Display the class of the attribute open_acc:
+
+```{r message = FALSE, warning = FALSE}
+class(creditData$open_acc)
+```
+Assign the median value into the NAs
+
+```{r message = FALSE, warning = FALSE}
+med_open_acc <- median(creditData$open_acc, na.rm = TRUE)
+med_open_acc
+creditData[is.na(creditData$open_acc), "open_acc"] <- med_open_acc
+
+```
+
+
+## Attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$last_credit_pull_d)
+
+```
+Display the class
+
+```{r message = FALSE, warning = FALSE}
+
+class(creditData$last_credit_pull_d)
+```
+Factorize the attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+vec_last_credit_pull_d <- as.factor(creditData$last_credit_pull_d)
+class(vec_last_credit_pull_d)
+
+```
+Remove the blanks
+
+```{r message = FALSE, warning = FALSE}
+creditData <- creditData[!is.na(creditData$last_credit_pull_d), ]
+creditData
+
+```
+
+## Attribute pub_rec
+
+Assign the median into the missing values
+
+```{r message = FALSE, warning = FALSE}
+med_pub_rec <- median(creditData$pub_rec, na.rm = TRUE)
+med_pub_rec
+creditData[is.na(creditData$pub_rec), "pub_rec"] <- med_pub_rec
+
+```
+## Attribute purpose
+
+Factorize the character
+```{r message = FALSE, warning = FALSE}
+vec_purpose <- as.factor(creditData$purpose)
+class(vec_purpose)
+
+```
+
 ### Attribute collections_12_mths_ex_med
 
 ### Attribute delinq_2yrs
