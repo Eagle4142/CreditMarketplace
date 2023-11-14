@@ -1,10 +1,10 @@
 ---
 title: "Assignment 1"
-author: David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br> 
+author: "David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br>"
 date: "`r Sys.time()`"
 output:
   github_document:
-    toc: true
+    toc: yes
     toc_depth: 3
 ---
 
@@ -24,6 +24,7 @@ First of all we are going to load the packages required for this project.
 ```{r message = FALSE, warning = FALSE}
 #install.packages("readr")
 #install.packages("tidyverse")
+<<<<<<< HEAD
 #install.packages("formattable")
 library(car)
 library(corrplot)
@@ -35,6 +36,10 @@ library(openxlsx)
 library(readr)
 library(tidyverse)
 
+=======
+library(readr)
+library(tidyverse)
+>>>>>>> 010c1ed15cec1a5361cbebc6d9e1496a987b081b
 ```
 
 
@@ -105,6 +110,7 @@ creditData2<- subset(creditData2,select=-c(policy_code,
 ```
 # Explore Data
 
+<<<<<<< HEAD
 ## Attribute revol_util
 
 Display a summary of the attribute **revol_util**
@@ -153,6 +159,17 @@ We cann see that debt consolidation and credit card refinancing are dominating t
 upper and lower cases. So we are making every value in lower cases and take the top 30 categories for the predicition.The rest will be sum up as "others"
 
 ## Attribute addr_state
+=======
+## Structure of the Dataset
+
+```{r message = FALSE, warning = FALSE, echo=FALSE, results = 'asis'}
+cat(paste0("The dataset has **", nrow(creditData), "** rows and **", ncol(creditData), "** columns."))
+```
+
+## Attributes
+
+### Attribute addr_state
+>>>>>>> 010c1ed15cec1a5361cbebc6d9e1496a987b081b
 
 Display a summary of the attribute **addr_state**:
 
@@ -169,7 +186,6 @@ plot(table(creditData$addr_state))
 Build a contingency table of the counts at each combination of factor levels.
 
 ```{r message = FALSE, warning = FALSE}
-
 table(creditData$addr_state)
 ```
 
@@ -177,7 +193,7 @@ table(creditData$addr_state)
 
 We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
 
-## Attribute annual_inc
+### Attribute annual_inc
 
 Display a summary of the attribute **annual_inc**:
 
@@ -206,4 +222,130 @@ Looks like there are indeed some unrealistic values in our dataset: A nurse with
 
 We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
 
-## ...
+### Attribute application_type
+
+Display a summary of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$application_type)
+```
+
+Plot the distribution of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$application_type))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$application_type)
+```
+
+**Conclusion**:
+
+The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value.
+
+
+## Attribute verification_status
+
+Display a summary of the attribute **verification_status**:
+
+```{r message = FALSE, warning = FALSE}
+count(creditData[is.na(creditData$verification_status), ])
+class(creditData$verification_status)
+```
+Factorize the character value
+
+```{r message = FALSE, warning = FALSE}
+vec_Verif <- as.factor(creditData$verification_status)
+class(vec_Verif)
+```
+
+## Attribute open_acc
+
+Display the attribute open_acc
+```{r message = FALSE, warning = FALSE}
+summary(creditData$open_acc)
+```
+
+Display the class of the attribute open_acc:
+
+```{r message = FALSE, warning = FALSE}
+class(creditData$open_acc)
+```
+Assign the median value into the NAs
+
+```{r message = FALSE, warning = FALSE}
+med_open_acc <- median(creditData$open_acc, na.rm = TRUE)
+med_open_acc
+creditData[is.na(creditData$open_acc), "open_acc"] <- med_open_acc
+
+```
+
+
+## Attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$last_credit_pull_d)
+
+```
+Display the class
+
+```{r message = FALSE, warning = FALSE}
+
+class(creditData$last_credit_pull_d)
+```
+Factorize the attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+vec_last_credit_pull_d <- as.factor(creditData$last_credit_pull_d)
+class(vec_last_credit_pull_d)
+
+```
+Remove the blanks
+
+```{r message = FALSE, warning = FALSE}
+creditData <- creditData[!is.na(creditData$last_credit_pull_d), ]
+creditData
+
+```
+
+## Attribute pub_rec
+
+Assign the median into the missing values
+
+```{r message = FALSE, warning = FALSE}
+med_pub_rec <- median(creditData$pub_rec, na.rm = TRUE)
+med_pub_rec
+creditData[is.na(creditData$pub_rec), "pub_rec"] <- med_pub_rec
+
+```
+## Attribute purpose
+
+Factorize the character
+```{r message = FALSE, warning = FALSE}
+vec_purpose <- as.factor(creditData$purpose)
+class(vec_purpose)
+
+```
+
+### Attribute collections_12_mths_ex_med
+
+### Attribute delinq_2yrs
+
+### Attribute dti
+
+### Attribute earliest_cr_line
+
+### Attribute emp_length
+
+### Attribute funded_amnt
+
+### Attribute funded_amnt_inv
+
+### Attribute home_ownership
+
+### Attribute initial_list_status
+
+### Attribute ...
