@@ -36,7 +36,7 @@ library(formattable)
 Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- read_delim("LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+creditData <- read_delim("/Users/serhat/Downloads/LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 knitr::kable(head(creditData, 1))
 ```
 
