@@ -51,7 +51,7 @@ knitr::kable(head(creditData, 1))
 The decision to drop certain variables from the dataset for predicting the interest rate of new loan applications is based on their unavailability or irrelevance at the time of prediction. First of all we are going to drop these variables:
 
 ```{r message = FALSE, warning = FALSE}
-creditDataSerhat2 <- subset(creditDataSerhat,select=-c(collection_recovery_fee,
+creditData2 <- subset(creditData,select=-c(collection_recovery_fee,
                                                        installment,
                                                        issue_d,
                                                        last_pymnt_amnt,
@@ -74,7 +74,7 @@ creditDataSerhat2 <- subset(creditDataSerhat,select=-c(collection_recovery_fee,
 Next we are removing all variables with more than 200'000 blank values.
 
 ```{r message = FALSE, warning = FALSE}
-creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
+creditData2<- subset(creditData2,select=-c(annual_inc_joint,
                                                        desc,
                                                        dti_joint,
                                                        mths_since_last_delinq,
@@ -100,12 +100,57 @@ creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
 We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1.
 
 ```{r message = FALSE, warning = FALSE}
-creditDataSerhat2 <- subset(creditDataSerhat,select=-c(policy_code,
+creditData2<- subset(creditData2,select=-c(policy_code,
                                                        url))
 ```
 # Explore Data
 
+## Attribute revol_util
 
+Display a summary of the attribute **revol_util**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData2$revol_util)
+```
+
+As we can see, this attribute has 454 blanks which we are going to remove entirely from the dataset.
+
+```{r message = FALSE, warning = FALSE}
+creditData2<- filter(creditData, ! is.na(revol_util))
+creditData2$title <- tolower(creditData2$title)
+```
+
+## Attribute title
+Display a summary of the attribute **revol_util**
+```{r message = FALSE, warning = FALSE}
+summary(creditData2$title)
+```
+
+It is visible, that we have 56143 levels and this is way to much. Let's see which of them are occuring the most.
+
+```{r message = FALSE, warning = FALSE}
+
+max(table(creditData2$title))
+HäufigkeitTitle <- round(prop.table(table(creditData2title))*100,2)
+
+tabelle <- cbind(HäufigkeitTitle)
+
+kategorie_haeufigkeit <- table(creditData2$title)
+
+sortierte_haeufigkeit <- sort(kategorie_haeufigkeit, decreasing = TRUE)
+
+top30 <- head(sortierte_haeufigkeit, 30)
+
+top30_namen <- names(top30)
+
+creditData2$title <- ifelse(creditData2$title %in% top30_namen, creditData2$title, 'others')
+
+table(creditData2$title)
+creditData2$title <- factor("title")
+```
+
+We cann see that debt consolidation and credit card refinancing are dominating the categories with over 67% and many of the categories are redundant due to 
+upper and lower cases. So we are making every value in lower cases and take the top 30 categories for the predicition.The rest will be sum up as "others"
 
 ## Attribute addr_state
 
