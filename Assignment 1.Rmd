@@ -39,7 +39,16 @@ knitr::kable(head(creditData, 1))
 ```
 
 # Explore Data
-## Attribute addr_state
+
+## Structure of the Dataset
+
+```{r message = FALSE, warning = FALSE, echo=FALSE, results = 'asis'}
+cat(paste0("The dataset has **", nrow(creditData), "** rows and **", ncol(creditData), "** columns."))
+```
+
+## Attributes
+
+### Attribute addr_state
 
 Display a summary of the attribute **addr_state**:
 
@@ -63,7 +72,7 @@ table(creditData$addr_state)
 
 We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
 
-## Attribute annual_inc
+### Attribute annual_inc
 
 Display a summary of the attribute **annual_inc**:
 
@@ -92,7 +101,7 @@ Looks like there are indeed some unrealistic values in our dataset: A nurse with
 
 We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
 
-## Attribute application_type
+### Attribute application_type
 
 Display a summary of the attribute **application_type**:
 
@@ -117,22 +126,22 @@ table(creditData$application_type)
 The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value.
 
 
-## Attribute collections_12_mths_ex_med
+### Attribute collections_12_mths_ex_med
 
-## Attribute delinq_2yrs
+### Attribute delinq_2yrs
 
-## Attribute dti
+### Attribute dti
 
-## Attribute earliest_cr_line
+### Attribute earliest_cr_line
 
-## Attribute emp_length
+### Attribute emp_length
 
-## Attribute funded_amnt
+### Attribute funded_amnt
 
-## Attribute funded_amnt_inv
+### Attribute funded_amnt_inv
 
-## Attribute home_ownership
+### Attribute home_ownership
 
-## Attribute initial_list_status
+### Attribute initial_list_status
 
-## Attribute ...
+### Attribute ...
