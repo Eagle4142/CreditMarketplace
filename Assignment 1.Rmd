@@ -68,7 +68,7 @@ creditDataSerhat2 <- subset(creditDataSerhat,select=-c(collection_recovery_fee,
                                                        total_rec_int,
                                                        total_rec_late_fee,
                                                        total_rec_prncp))
-````
+```
 
 
 Next we are removing all variables with more than 200'000 blank values.
@@ -95,8 +95,14 @@ creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
                                                        inq_fi,
                                                        total_cu_tl,
                                                        inq_last_12m))
-`````
+```
 
+We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1.
+
+```{r message = FALSE, warning = FALSE}
+creditDataSerhat2 <- subset(creditDataSerhat,select=-c(policy_code,
+                                                       url))
+```
 # Explore Data
 
 
