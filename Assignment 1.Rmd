@@ -48,39 +48,38 @@ knitr::kable(head(creditData, 1))
 ```
 
 ## Data removal
-The decision to drop certain variables from the dataset for predicting the interest rate of new loan applications is based on their unavailability or irrelevance at the time of prediction. Here's a detailed list/code of the dropped variables:
+The decision to drop certain variables from the dataset for predicting the interest rate of new loan applications is based on their unavailability or irrelevance at the time of prediction. First of all we are going to drop these variables:
 
 ```{r message = FALSE, warning = FALSE}
-creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
-                                                       collection_recovery_fee,
-                                                       desc,
-                                                       dti_joint,
-                                                       emp_title,
-                                                       id,
-                                                       inq_last_6mths,
+creditDataSerhat2 <- subset(creditDataSerhat,select=-c(collection_recovery_fee,
                                                        installment,
                                                        issue_d,
                                                        last_pymnt_amnt,
                                                        last_pymnt_d,
                                                        loan_status,
-                                                       member_id,
-                                                       mths_since_last_delinq,
-                                                       mths_since_last_major_derog,
-                                                       mths_since_last_record,
                                                        next_pymnt_d,
                                                        out_prncp,
                                                        out_prncp_inv,
-                                                       policy_code,
                                                        pymnt_plan,
                                                        recoveries,
                                                        term,
-                                                       total_acc,
                                                        total_pymnt,
                                                        total_pymnt_inv,
                                                        total_rec_int,
                                                        total_rec_late_fee,
-                                                       total_rec_prncp,
-                                                       url,
+                                                       total_rec_prncp))
+````
+
+
+Next we are removing all variables with more than 200'000 blank values.
+
+```{r message = FALSE, warning = FALSE}
+creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
+                                                       desc,
+                                                       dti_joint,
+                                                       mths_since_last_delinq,
+                                                       mths_since_last_major_derog,
+                                                       mths_since_last_record,
                                                        open_acc_6m,
                                                        open_il_6m,
                                                        open_il_12m,
@@ -96,7 +95,8 @@ creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
                                                        inq_fi,
                                                        total_cu_tl,
                                                        inq_last_12m))
-````
+`````
+
 # Explore Data
 
 
