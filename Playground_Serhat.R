@@ -64,9 +64,9 @@ creditDataSerhat2 <- subset(creditDataSerhat,select=-c(annual_inc_joint,
 ###Data Preprocessing revol_util
 creditDataSerhat3 <- filter(creditDataSerhat2, ! is.na(revol_util))
 creditDataSerhat4 <- creditDataSerhat3
-creditDataSerhat4$title <- tolower(creditDataSerhat4$title)
 
 ###Data Preprocessing title
+creditDataSerhat4$title <- tolower(creditDataSerhat4$title)
 #How about titles? Is there one title that dominates the dataset?
 max(table(creditDataSerhat4$title))
 HäufigkeitTitle <- round(prop.table(table(creditDataSerhat4$title))*100,2)
