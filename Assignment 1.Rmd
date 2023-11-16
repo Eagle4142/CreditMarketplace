@@ -142,7 +142,7 @@ It is visible, that we have 56143 levels and this is way to much. Let's see whic
 ```{r message = FALSE, warning = FALSE}
 max(table(creditData5$title))
 FrequencyTitle <- round(prop.table(table(creditData5$title))*100,2)
-table <- cbind(HäufigkeitTitle)
+table <- cbind(FrequencyTitle)
 ```
 
 In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67% and many of the categories are redundant due to upper and lower cases. So we are making every value in lower cases and take the top 30 categories for the predicition. The rest will be sum up as "others"
@@ -150,31 +150,47 @@ In the table we can see that debt consolidation and credit card refinancing are 
 
 ```{r message = FALSE, warning = FALSE}
 category_frequency <- table(creditData5$title)
-sorted_frequency <- sort(kategorie_haeufigkeit, decreasing = TRUE)
+sorted_frequency <- sort(category_frequency, decreasing = TRUE)
 top30 <- head(sorted_frequency, 30)
 top30_namen <- names(top30)
-creditData6$title <- ifelse(creditData2$title %in% top30_namen, creditData5$title, 'others')
+creditData5$title <- ifelse(creditData5$title %in% top30_namen, creditData5$title, 'others')
 ```
 
 Now we can see which categories are left:
 ```{r message = FALSE, warning = FALSE}
-table(creditData6$title)
+table(creditData5$title)
 ```
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditData6$title <- factor("title")
+creditData5$title <- factor("title")
 ```
 
 ## Attribute zip_code
 
 Let us first have a look at the variable:
 ```{r message = FALSE, warning = FALSE}
-summary(creditDataSerhat6$zip_code)
+summary(creditData5$zip_code)
+head(creditData5$zip_code)
+```
+Let's have a more in depth view on the data:
+
+```{r message = FALSE, warning = FALSE}
+tab <- table(creditData5$zip_code, creditData5$addr_state)
 ```
 
+As we can see with the table function, some of the zip_code are occuring in multiple states. Therefore, it makes sense to combine the zip_code and addr_state variable to create truely unique values. This way it could give us a better prediction for the interest rate.
 
+```{r message = FALSE, warning = FALSE}
+creditData5$zip_code <- substr(creditData5$zip_code, 1, 3)
+creditData5$combo_zip_addr <- paste0(creditData5$zip_code, creditData5$addr_state)
+print(creditDataSerhat4)
+creditData5 <- subset(creditData5,select=-c(zip_code,addr_state))
+```
 
+## Attribute acc_now_deling
+## Attribute tot_coll_amt
+## Attribute tot_cur_bal
 ## Attribute addr_state
 
 Display a summary of the attribute **addr_state**:
