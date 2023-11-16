@@ -87,7 +87,7 @@ creditData2 <- subset(creditData,select=-c(collection_recovery_fee,
 Next we are removing all variables with more than 200'000 blank values.
 
 ```{r message = FALSE, warning = FALSE}
-creditData2<- subset(creditData2,select=-c(annual_inc_joint,
+creditData3<- subset(creditData2,select=-c(annual_inc_joint,
                                                        desc,
                                                        dti_joint,
                                                        mths_since_last_delinq,
@@ -110,11 +110,10 @@ creditData2<- subset(creditData2,select=-c(annual_inc_joint,
                                                        inq_last_12m))
 ```
 
-We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1.
+We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
 
 ```{r message = FALSE, warning = FALSE}
-creditData2<- subset(creditData2,select=-c(policy_code,
-                                                       url))
+creditData4<- subset(creditData3,select=-c(policy_code,url,verification_status_joint))
 ```
 # Explore Data
 
@@ -123,47 +122,49 @@ creditData2<- subset(creditData2,select=-c(policy_code,
 Display a summary of the attribute **revol_util**
 
 ```{r message = FALSE, warning = FALSE}
-summary(creditData2$revol_util)
+summary(creditData4$revol_util)
 ```
 
 As we can see, this attribute has 454 blanks which we are going to remove entirely from the dataset.
 
 ```{r message = FALSE, warning = FALSE}
-creditData2<- filter(creditData, ! is.na(revol_util))
-creditData2$title <- tolower(creditData2$title)
+creditData5<- filter(creditData4, ! is.na(revol_util))
 ```
 
 ## Attribute title
 Display a summary of the attribute **revol_util**
 ```{r message = FALSE, warning = FALSE}
-summary(creditData2$title)
+summary(creditData5$title)
 ```
 
 It is visible, that we have 56143 levels and this is way to much. Let's see which of them are occuring the most.
 
 ```{r message = FALSE, warning = FALSE}
-
-max(table(creditData2$title))
-HäufigkeitTitle <- round(prop.table(table(creditData2$title))*100,2)
-
-tabelle <- cbind(HäufigkeitTitle)
-
-kategorie_haeufigkeit <- table(creditData2$title)
-
-sortierte_haeufigkeit <- sort(kategorie_haeufigkeit, decreasing = TRUE)
-
-top30 <- head(sortierte_haeufigkeit, 30)
-
-top30_namen <- names(top30)
-
-creditData2$title <- ifelse(creditData2$title %in% top30_namen, creditData2$title, 'others')
-
-table(creditData2$title)
-creditData2$title <- factor("title")
+max(table(creditData5$title))
+FrequencyTitle <- round(prop.table(table(creditData5$title))*100,2)
+table <- cbind(HäufigkeitTitle)
 ```
 
-We cann see that debt consolidation and credit card refinancing are dominating the categories with over 67% and many of the categories are redundant due to 
-upper and lower cases. So we are making every value in lower cases and take the top 30 categories for the predicition.The rest will be sum up as "others"
+In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67% and many of the categories are redundant due to upper and lower cases. So we are making every value in lower cases and take the top 30 categories for the predicition. The rest will be sum up as "others"
+
+
+```{r message = FALSE, warning = FALSE}
+category_frequency <- table(creditData5$title)
+sorted_frequency <- sort(kategorie_haeufigkeit, decreasing = TRUE)
+top30 <- head(sorted_frequency, 30)
+top30_namen <- names(top30)
+creditData6$title <- ifelse(creditData2$title %in% top30_namen, creditData5$title, 'others')
+```
+
+Now we can see which categories are left:
+```{r message = FALSE, warning = FALSE}
+table(creditData6$title)
+```
+
+Finally, we can factorise this variable
+```{r message = FALSE, warning = FALSE}
+creditData6$title <- factor("title")
+```
 
 ## Attribute addr_state
 
