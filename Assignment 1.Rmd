@@ -131,6 +131,21 @@ As we can see, this attribute has 454 blanks which we are going to remove entire
 creditData5 <- filter(creditData4, ! is.na(revol_util))
 ```
 
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData5$revol_util, creditData5$revol_util,
+     xlab = "revol_util", 
+     ylab = "revol_util",
+     main = "Scatter plot of revol_util",
+     pch = 20,
+     col = "blue")
+```
+It seems to have some outliers. We do remove values over 250.
+
+```{r message = FALSE, warning = FALSE}
+creditData5 <- subset(creditData5, revol_util <= 200)
+```
+
 ## Attribute title
 Display a summary of the attribute **revol_util**
 ```{r message = FALSE, warning = FALSE}
@@ -188,6 +203,11 @@ print(creditDataSerhat4)
 creditData5 <- subset(creditData5,select=-c(zip_code,addr_state))
 ```
 
+Finally, we can factorise this variable
+```{r message = FALSE, warning = FALSE}
+creditData5$combo_zip_addr <- factor("combo_zip_addr")
+```
+
 ## Attribute acc_now_deling
 Let us first have a look at the variable:
 ```{r message = FALSE, warning = FALSE}
@@ -200,6 +220,17 @@ More than 75% of the data seems to have the value 0. We can keep it as it is for
 Higher0 <- sum(creditData5$acc_now_delinq > 0, na.rm = TRUE)
 print(Higher0)
 ```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData5$acc_now_delinq, creditData5$acc_now_delinq,
+     xlab = "acc_now_delinq", 
+     ylab = "acc_now_delinq",
+     main = "Scatter plot of acc_now_delinq",
+     pch = 20,
+     col = "blue")
+```
+There doesn't seem to have outrageous outliers, so we keep the data as it is.
 
 ## Attribute tot_coll_amt
 Now we can have a look at the attribute tot_coll_amt.
@@ -221,6 +252,21 @@ median_tot_coll_amt <- median(creditData5$tot_coll_amt, na.rm = TRUE)
 creditData5$tot_coll_amt[is.na(creditData5$tot_coll_amt)] <- median_tot_coll_amt
 ```
 
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData5$tot_coll_amt, creditData5$tot_coll_amt,
+     xlab = "tot_coll_amt", 
+     ylab = "tot_coll_amt",
+     main = "Scatter plot of tot_coll_amt",
+     pch = 20,
+     col = "blue")
+```
+There is an outlier, so we are removing it.
+
+```{r message = FALSE, warning = FALSE}
+creditData5 <- subset(creditData5, tot_coll_amt <= 2000000)
+```
+
 ## Attribute tot_cur_bal
 
 Now we can have a look at the attribute tot_cur_bal.
@@ -240,6 +286,21 @@ Only 102 cells with the value 0. It makes absolutely sense to replace this time 
 mean_tot_cur_bal <- mean(creditData5$tot_cur_bal, na.rm = TRUE)
 
 creditData5$tot_cur_bal[is.na(creditData5$tot_cur_bal)] <- mean_tot_cur_bal
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData5$tot_cur_bal, creditData5$tot_cur_bal,
+     xlab = "tot_cur_bal", 
+     ylab = "tot_cur_bal",
+     main = "Scatter plot of tot_cur_bal",
+     pch = 20,
+     col = "blue")
+```
+There is an outlier, so we are removing it.
+
+```{r message = FALSE, warning = FALSE}
+creditData5 <- subset(creditData5, tot_cur_bal <= 4000000)
 ```
 
 ## Attribute addr_state
