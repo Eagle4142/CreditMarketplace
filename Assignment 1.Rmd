@@ -189,8 +189,59 @@ creditData5 <- subset(creditData5,select=-c(zip_code,addr_state))
 ```
 
 ## Attribute acc_now_deling
+Let us first have a look at the variable:
+```{r message = FALSE, warning = FALSE}
+summary(creditData5$acc_now_delinq)
+```
+
+More than 75% of the data seems to have the value 0. We can keep it as it is for further analysis. But we can check how many values are higher than zero to understand the data better.
+
+```{r message = FALSE, warning = FALSE}
+Higher0 <- sum(creditData5$acc_now_delinq > 0, na.rm = TRUE)
+print(Higher0)
+```
+
 ## Attribute tot_coll_amt
+Now we can have a look at the attribute tot_coll_amt.
+```{r message = FALSE, warning = FALSE}
+summary(creditData$tot_coll_amt)
+```
+There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
+
+```{r message = FALSE, warning = FALSE}
+zero_in_column <- sum(creditData5$tot_coll_amt == 0, na.rm = TRUE)
+print(zero_in_column)
+```
+
+630268 cells with the value 0. It makes absolutely sense to replace the NA's with the median, which would be 0.
+
+```{r message = FALSE, warning = FALSE}
+median_tot_coll_amt <- median(creditData5$tot_coll_amt, na.rm = TRUE)
+
+creditData5$tot_coll_amt[is.na(creditData5$tot_coll_amt)] <- median_tot_coll_amt
+```
+
 ## Attribute tot_cur_bal
+
+Now we can have a look at the attribute tot_cur_bal.
+```{r message = FALSE, warning = FALSE}
+summary(creditData$tot_cur_bal)
+```
+There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
+
+```{r message = FALSE, warning = FALSE}
+zero_in_column <- sum(creditData5$tot_cur_bal == 0, na.rm = TRUE)
+print(zero_in_column)
+```
+
+Only 102 cells with the value 0. It makes absolutely sense to replace this time the NA's with the mean, which would be 139508. The distribution between the value seems also alright.
+
+```{r message = FALSE, warning = FALSE}
+mean_tot_cur_bal <- mean(creditData5$tot_cur_bal, na.rm = TRUE)
+
+creditData5$tot_cur_bal[is.na(creditData5$tot_cur_bal)] <- mean_tot_cur_bal
+```
+
 ## Attribute addr_state
 
 Display a summary of the attribute **addr_state**:
