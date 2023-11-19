@@ -50,7 +50,7 @@ library(tidyverse)
 Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- read_delim("/Users/serhat/Downloads/LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+creditData <- read_delim("LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 knitr::kable(head(creditData, 1))
 ```
 
@@ -199,7 +199,7 @@ As we can see with the table function, some of the zip_code are occuring in mult
 ```{r message = FALSE, warning = FALSE}
 creditData5$zip_code <- substr(creditData5$zip_code, 1, 3)
 creditData5$combo_zip_addr <- paste0(creditData5$zip_code, creditData5$addr_state)
-print(creditDataSerhat4)
+#print(creditDataSerhat4)
 creditData5 <- subset(creditData5,select=-c(zip_code,addr_state))
 ```
 
@@ -327,6 +327,14 @@ table(creditData$addr_state)
 
 We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
 
+Convert the character attribute into a categorical value (factor):
+
+```{r message = FALSE, warning = FALSE}
+creditData$addr_state <- as.factor(creditData$addr_state)
+str(creditData$addr_state)
+```
+
+
 ## Attribute annual_inc
 
 Display a summary of the attribute **annual_inc**:
@@ -356,6 +364,13 @@ Looks like there are indeed some unrealistic values in our dataset: A nurse with
 
 We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
 
+Remove NAs and overwrite values > 800'000 with 65'000:
+
+```{r message = FALSE, warning = FALSE}
+creditData <- subset(creditData, is.na(creditData$annual_inc) != 1)
+creditData$annual_inc <- if_else(creditData$annual_inc > 800000, 65000, creditData$annual_inc)
+```
+
 ## Attribute application_type
 
 Display a summary of the attribute **application_type**:
@@ -378,7 +393,14 @@ table(creditData$application_type)
 
 **Conclusion**:
 
-The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value.
+The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value or factorized.
+
+Converting attribute into factor:
+
+```{r message = FALSE, warning = FALSE}
+creditData$application_type <- as.factor(creditData$application_type)
+str(creditData$application_type)
+```
 
 
 ## Attribute verification_status
@@ -466,9 +488,74 @@ class(vec_purpose)
 
 ## Attribute collections_12_mths_ex_med
 
+Display a summary of the attribute **collections_12_mths_ex_med**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$collections_12_mths_ex_med)
+```
+
+As shown, it's a numerical value with 122 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$collections_12_mths_ex_med)
+```
+**Conclusion**
+As expected the number of collections decreases and the majority of cases have not had a collection. The 122 NAs should be removed.
+
+Removing the 122 NAs:
+
+```{r message = FALSE, warning = FALSE}
+creditData <- subset(creditData, is.na(creditData$collections_12_mths_ex_med) != 1)
+```
+
+
 ## Attribute delinq_2yrs
 
+Display a summary for the atrribute **delinq_2yrs**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$delinq_2yrs)
+```
+As shown, it's a numerical value with 25 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$delinq_2yrs)
+```
+**Conclusion**
+Only integers (whole numbers) are used. Most of the records (645151) did not have a 30+ days past-due incidences of delinquency in the borrower's credit file for the past 2 years. Densitiy decreases the higher the number of  incidences of delinquency.
+
+Removing the 25 NAs:
+
+```{r message = FALSE, warning = FALSE}
+creditData <- subset(creditData, is.na(creditData$delinq_2yrs) != 1)
+```
+
+
 ## Attribute dti
+
+Display a summary for the atrribute **dti**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$dti)
+```
+Probably some outliers in the data:
+
+```{r message = FALSE, warning = FALSE}
+plot(creditData$dti)
+```
+
+Let's display the top 100 values for dti:
+
+```{r message = FALSE, warning = FALSE}
+head((creditData %>% arrange(desc(creditData$dti)))$dti, 100)
+```
+
+**Conclusion**
+Should probably remove all the records with values equal to or above 100 for dti:
+
+```{r message = FALSE, warning = FALSE}
+creditData <- subset(creditData, creditData$dti < 100)
+```
 
 ## Attribute earliest_cr_line
 
