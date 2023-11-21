@@ -6,7 +6,7 @@ By Thursday
 By Thursday morning
 - Correlation matrix
 - Multicollinearity
-
+- Mail to Gwen for coaching
 
 ---
 title: "Assignment 1"
