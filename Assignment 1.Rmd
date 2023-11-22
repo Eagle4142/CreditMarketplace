@@ -340,8 +340,8 @@ We should keep this attribute in the dataset for the moment. The interest rate c
 Convert the character attribute into a categorical value (factor):
 
 ```{r message = FALSE, warning = FALSE}
-creditData$addr_state <- as.factor(creditData$addr_state)
-str(creditData$addr_state)
+creditDataProcessed$addr_state <- as.factor(creditDataProcessed$addr_state)
+str(creditDataProcessed$addr_state)
 ```
 
 
@@ -377,8 +377,8 @@ We should keep this attribute in the dataset for the moment. The interest rate w
 Remove NAs and overwrite values > 800'000 with 65'000:
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- subset(creditData, is.na(creditData$annual_inc) != 1)
-creditData$annual_inc <- if_else(creditData$annual_inc > 800000, 65000, creditData$annual_inc)
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$annual_inc) != 1)
+creditDataProcessed$annual_inc <- if_else(creditDataProcessed$annual_inc > 800000, 65000, creditDataProcessed$annual_inc)
 ```
 
 ## Attribute application_type
@@ -408,8 +408,8 @@ The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. T
 Converting attribute into factor:
 
 ```{r message = FALSE, warning = FALSE}
-creditData$application_type <- as.factor(creditData$application_type)
-str(creditData$application_type)
+creditDataProcessed$application_type <- as.factor(creditDataProcessed$application_type)
+str(creditDataProcessed$application_type)
 ```
 
 
@@ -515,7 +515,7 @@ As expected the number of collections decreases and the majority of cases have n
 Removing the 122 NAs:
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- subset(creditData, is.na(creditData$collections_12_mths_ex_med) != 1)
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$collections_12_mths_ex_med) != 1)
 ```
 
 
@@ -537,7 +537,7 @@ Only integers (whole numbers) are used. Most of the records (645151) did not hav
 Removing the 25 NAs:
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- subset(creditData, is.na(creditData$delinq_2yrs) != 1)
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$delinq_2yrs) != 1)
 ```
 
 
@@ -564,7 +564,7 @@ head((creditData %>% arrange(desc(creditData$dti)))$dti, 100)
 Should probably remove all the records with values equal to or above 100 for dti:
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- subset(creditData, creditData$dti < 100)
+creditDataProcessed <- subset(creditDataProcessed, creditDataProcessed$dti < 100)
 ```
 
 ## Attribute earliest_cr_line
