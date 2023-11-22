@@ -74,7 +74,7 @@ cat(paste0("The dataset has **", nrow(creditData), "** rows and **", ncol(credit
 The decision to drop certain variables from the dataset for predicting the interest rate of new loan applications is based on their unavailability or irrelevance at the time of prediction. First of all we are going to drop these variables:
 
 ```{r message = FALSE, warning = FALSE}
-creditData2 <- subset(creditData,select=-c(collection_recovery_fee,
+creditDataProcessed <- subset(creditData,select=-c(collection_recovery_fee,
                                                        installment,
                                                        issue_d,
                                                        last_pymnt_amnt,
@@ -97,7 +97,7 @@ creditData2 <- subset(creditData,select=-c(collection_recovery_fee,
 Next we are removing all variables with more than 200'000 blank values.
 
 ```{r message = FALSE, warning = FALSE}
-creditData3<- subset(creditData2,select=-c(annual_inc_joint,
+creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
                                                        desc,
                                                        dti_joint,
                                                        mths_since_last_delinq,
@@ -123,7 +123,7 @@ creditData3<- subset(creditData2,select=-c(annual_inc_joint,
 We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
 
 ```{r message = FALSE, warning = FALSE}
-creditData4<- subset(creditData3,select=-c(policy_code,url,verification_status_joint))
+creditDataProcessed <- subset(creditDataProcessed,select=-c(policy_code,url,verification_status_joint))
 ```
 # Explore Data
 
@@ -132,18 +132,18 @@ creditData4<- subset(creditData3,select=-c(policy_code,url,verification_status_j
 Display a summary of the attribute **revol_util**
 
 ```{r message = FALSE, warning = FALSE}
-summary(creditData4$revol_util)
+summary(creditData$revol_util)
 ```
 
 As we can see, this attribute has 454 blanks which we are going to remove entirely from the dataset.
 
 ```{r message = FALSE, warning = FALSE}
-creditData5 <- filter(creditData4, ! is.na(revol_util))
+creditDataProcessed <- filter(creditDataProcessed, ! is.na(revol_util))
 ```
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData5$revol_util, creditData5$revol_util,
+plot(creditDataProcessed$revol_util, creditData5$revol_util,
      xlab = "revol_util", 
      ylab = "revol_util",
      main = "Scatter plot of revol_util",
@@ -153,20 +153,20 @@ plot(creditData5$revol_util, creditData5$revol_util,
 It seems to have some outliers. We do remove values over 250.
 
 ```{r message = FALSE, warning = FALSE}
-creditData5 <- subset(creditData5, revol_util <= 200)
+creditDataProcessed <- subset(creditDataProcessed, revol_util <= 200)
 ```
 
 ## Attribute title
 Display a summary of the attribute **revol_util**
 ```{r message = FALSE, warning = FALSE}
-summary(creditData5$title)
+summary(creditData$title)
 ```
 
 It is visible, that we have 56143 levels and this is way to much. Let's see which of them are occuring the most.
 
 ```{r message = FALSE, warning = FALSE}
-max(table(creditData5$title))
-FrequencyTitle <- round(prop.table(table(creditData5$title))*100,2)
+max(table(creditData$title))
+FrequencyTitle <- round(prop.table(table(creditData$title))*100,2)
 table <- cbind(FrequencyTitle)
 ```
 
@@ -174,66 +174,65 @@ In the table we can see that debt consolidation and credit card refinancing are 
 
 
 ```{r message = FALSE, warning = FALSE}
-category_frequency <- table(creditData5$title)
+category_frequency <- table(creditDataProcessed$title)
 sorted_frequency <- sort(category_frequency, decreasing = TRUE)
 top30 <- head(sorted_frequency, 30)
 top30_namen <- names(top30)
-creditData5$title <- ifelse(creditData5$title %in% top30_namen, creditData5$title, 'others')
+creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top30_namen, creditDataProcessed$title, 'others')
 ```
 
 Now we can see which categories are left:
 ```{r message = FALSE, warning = FALSE}
-table(creditData5$title)
+table(creditDataProcessed$title)
 ```
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditData5$title <- factor("title")
+creditDataProcessed$title <- factor("title")
 ```
 
 ## Attribute zip_code
 
 Let us first have a look at the variable:
 ```{r message = FALSE, warning = FALSE}
-summary(creditData5$zip_code)
-head(creditData5$zip_code)
+summary(creditData$zip_code)
+head(creditData$zip_code)
 ```
 Let's have a more in depth view on the data:
 
 ```{r message = FALSE, warning = FALSE}
-tab <- table(creditData5$zip_code, creditData5$addr_state)
+tab <- table(creditData$zip_code, creditData$addr_state)
 ```
 
 As we can see with the table function, some of the zip_code are occuring in multiple states. Therefore, it makes sense to combine the zip_code and addr_state variable to create truely unique values. This way it could give us a better prediction for the interest rate.
 
 ```{r message = FALSE, warning = FALSE}
-creditData5$zip_code <- substr(creditData5$zip_code, 1, 3)
-creditData5$combo_zip_addr <- paste0(creditData5$zip_code, creditData5$addr_state)
-#print(creditDataSerhat4)
-creditData5 <- subset(creditData5,select=-c(zip_code,addr_state))
+creditDataProcessed$zip_code <- substr(creditDataProcessed$zip_code, 1, 3)
+creditDataProcessed$combo_zip_addr <- paste0(creditDataProcessed$zip_code, creditDataProcessed$addr_state)
+creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state))
 ```
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditData5$combo_zip_addr <- factor("combo_zip_addr")
+creditDataProcessed$combo_zip_addr <- factor("combo_zip_addr")
 ```
 
 ## Attribute acc_now_deling
 Let us first have a look at the variable:
 ```{r message = FALSE, warning = FALSE}
-summary(creditData5$acc_now_delinq)
+summary(creditData$acc_now_delinq)
 ```
 
 More than 75% of the data seems to have the value 0. We can keep it as it is for further analysis. But we can check how many values are higher than zero to understand the data better.
 
 ```{r message = FALSE, warning = FALSE}
-Higher0 <- sum(creditData5$acc_now_delinq > 0, na.rm = TRUE)
+Higher0 <- sum(creditDataProcessed$acc_now_delinq > 0, na.rm = TRUE)
 print(Higher0)
 ```
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData5$acc_now_delinq, creditData5$acc_now_delinq,
+plot(creditData$acc_now_delinq, creditData$acc_now_delinq,
      xlab = "acc_now_delinq", 
      ylab = "acc_now_delinq",
      main = "Scatter plot of acc_now_delinq",
@@ -250,21 +249,21 @@ summary(creditData$tot_coll_amt)
 There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
 
 ```{r message = FALSE, warning = FALSE}
-zero_in_column <- sum(creditData5$tot_coll_amt == 0, na.rm = TRUE)
+zero_in_column <- sum(creditData$tot_coll_amt == 0, na.rm = TRUE)
 print(zero_in_column)
 ```
 
 630268 cells with the value 0. It makes absolutely sense to replace the NA's with the median, which would be 0.
 
 ```{r message = FALSE, warning = FALSE}
-median_tot_coll_amt <- median(creditData5$tot_coll_amt, na.rm = TRUE)
+median_tot_coll_amt <- median(creditDataProcessed$tot_coll_amt, na.rm = TRUE)
 
-creditData5$tot_coll_amt[is.na(creditData5$tot_coll_amt)] <- median_tot_coll_amt
+creditDataProcessed$tot_coll_amt[is.na(creditDataProcessed$tot_coll_amt)] <- median_tot_coll_amt
 ```
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData5$tot_coll_amt, creditData5$tot_coll_amt,
+plot(creditData$tot_coll_amt, creditData$tot_coll_amt,
      xlab = "tot_coll_amt", 
      ylab = "tot_coll_amt",
      main = "Scatter plot of tot_coll_amt",
@@ -274,7 +273,7 @@ plot(creditData5$tot_coll_amt, creditData5$tot_coll_amt,
 There is an outlier, so we are removing it.
 
 ```{r message = FALSE, warning = FALSE}
-creditData5 <- subset(creditData5, tot_coll_amt <= 2000000)
+creditDataProcessed <- subset(creditDataProcessed, tot_coll_amt <= 2000000)
 ```
 
 ## Attribute tot_cur_bal
@@ -286,21 +285,21 @@ summary(creditData$tot_cur_bal)
 There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
 
 ```{r message = FALSE, warning = FALSE}
-zero_in_column <- sum(creditData5$tot_cur_bal == 0, na.rm = TRUE)
+zero_in_column <- sum(creditData$tot_cur_bal == 0, na.rm = TRUE)
 print(zero_in_column)
 ```
 
 Only 102 cells with the value 0. It makes absolutely sense to replace this time the NA's with the mean, which would be 139508. The distribution between the value seems also alright.
 
 ```{r message = FALSE, warning = FALSE}
-mean_tot_cur_bal <- mean(creditData5$tot_cur_bal, na.rm = TRUE)
+mean_tot_cur_bal <- mean(creditDataProcessed$tot_cur_bal, na.rm = TRUE)
 
-creditData5$tot_cur_bal[is.na(creditData5$tot_cur_bal)] <- mean_tot_cur_bal
+creditDataProcessed$tot_cur_bal[is.na(creditDataProcessed$tot_cur_bal)] <- mean_tot_cur_bal
 ```
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData5$tot_cur_bal, creditData5$tot_cur_bal,
+plot(creditData$tot_cur_bal, creditData$tot_cur_bal,
      xlab = "tot_cur_bal", 
      ylab = "tot_cur_bal",
      main = "Scatter plot of tot_cur_bal",
@@ -310,7 +309,7 @@ plot(creditData5$tot_cur_bal, creditData5$tot_cur_bal,
 There is an outlier, so we are removing it.
 
 ```{r message = FALSE, warning = FALSE}
-creditData5 <- subset(creditData5, tot_cur_bal <= 4000000)
+creditDataProcessed <- subset(creditDataProcessed, tot_cur_bal <= 4000000)
 ```
 
 ## Attribute addr_state
