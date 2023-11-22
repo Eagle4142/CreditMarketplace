@@ -2,6 +2,7 @@
 By Thursday
 - Variable for Exploration: creditData
 - Variable for Processing: creditDataProcessed
+  - Serhat done
 
 By Thursday morning
 - Correlation matrix
