@@ -91,7 +91,7 @@ creditDataProcessed <- subset(creditData,select=-c(collection_recovery_fee,
                                                        total_pymnt_inv,
                                                        total_rec_int,
                                                        total_rec_late_fee,
-                                                       total_rec_prncp))
+                                                       total_rec_prncp,emp_title))
 ```
 
 
@@ -340,8 +340,8 @@ We should keep this attribute in the dataset for the moment. The interest rate c
 Convert the character attribute into a categorical value (factor):
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$addr_state <- as.factor(creditDataProcessed$addr_state)
-str(creditDataProcessed$addr_state)
+#creditDataProcessed$addr_state <- as.factor(creditDataProcessed$addr_state)
+#str(creditDataProcessed$addr_state)
 ```
 
 
@@ -472,7 +472,7 @@ class(creditDataProcessed$last_credit_pull_d)
 Remove the blanks
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed <- creditData[!is.na(creditData$last_credit_pull_d), ]
+creditDataProcessed <- creditDataProcessed[!is.na(creditDataProcessed$last_credit_pull_d), ]
 creditDataProcessed
 
 ```
@@ -609,7 +609,7 @@ plot(table(creditDataProcessed$emp_length))
 Convert the attribute into a factor:
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$emp_length <- as.factor(creditDataProcessed$emp_length)
+creditDataProcessed$emp_length <- as.numeric(as.character(creditDataProcessed$emp_length))
 str(creditDataProcessed$emp_length)
 ```
 
@@ -626,10 +626,65 @@ Let's plot a histogram:
 hist(creditData$funded_amnt)
 ```
 
-No further cleansing required.
+
 
 ## Attribute funded_amnt_inv - Ibrahim
 
+Display the summary of funded_amnt_inv
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$funded_amnt_inv)
+```
+Display the histogram of the feature to see distribution of values
+
+```{r message = FALSE, warning = FALSE}
+hist(creditData$funded_amnt_inv)
+```
+
 ## Attribute home_ownership - Ibrahim
 
+```{r message = FALSE, warning = FALSE}
+summary(creditData$home_ownership)
+```
+```{r message = FALSE, warning = FALSE}
+plot(table(creditDataProcessed$home_ownership))
+```
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$home_ownership <- as.factor(creditDataProcessed$home_ownership)
+str(creditDataProcessed$home_ownership)
+```
+
+
+
 ## Attribute initial_list_status - Ibrahim
+
+Let's see how many different status we have
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$initial_list_status)
+```
+
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$initial_list_status)
+```
+
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$initial_list_status <- as.numeric(creditDataProcessed$initial_list_status == "f")
+print(creditDataProcessed$initial_list_status)
+```
+
+Display all feature classes that we have chosen
+
+```{r message = FALSE, warning = FALSE}
+variable_classes <- sapply(creditDataProcessed, class)
+print(variable_classes)
+```
+
+
+
+```{r message = FALSE, warning = FALSE}
+library(corrplot)
+corrplot(cor(creditDataProcessed), method = "color")
+```
