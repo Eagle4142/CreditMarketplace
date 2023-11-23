@@ -144,7 +144,7 @@ creditDataProcessed <- filter(creditDataProcessed, ! is.na(revol_util))
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditDataProcessed$revol_util, creditData5$revol_util,
+plot(creditData$revol_util, creditData$revol_util,
      xlab = "revol_util", 
      ylab = "revol_util",
      main = "Scatter plot of revol_util",
@@ -189,7 +189,7 @@ table(creditDataProcessed$title)
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$title <- factor("title")
+creditDataProcessed$title <- as.factor(creditDataProcessed$title)
 ```
 
 ## Attribute zip_code
@@ -215,7 +215,7 @@ creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state)
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$combo_zip_addr <- factor("combo_zip_addr")
+creditDataProcessed$combo_zip_addr <- as.factor(creditDataProcessed$combo_zip_addr)
 ```
 
 ## Attribute acc_now_deling
