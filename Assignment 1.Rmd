@@ -567,16 +567,14 @@ Should probably remove all the records with values equal to or above 100 for dti
 creditDataProcessed <- subset(creditDataProcessed, creditDataProcessed$dti < 100)
 ```
 
-## Attribute earliest_cr_line
+## Attribute earliest_cr_line - David
 
-## Attribute emp_length
+## Attribute emp_length - David
 
-## Attribute funded_amnt
+## Attribute funded_amnt - David
 
-## Attribute funded_amnt_inv
+## Attribute funded_amnt_inv - Ibrahim
 
-## Attribute home_ownership
+## Attribute home_ownership - Ibrahim
 
-## Attribute initial_list_status
-
-## Attribute ...
+## Attribute initial_list_status - Ibrahim
