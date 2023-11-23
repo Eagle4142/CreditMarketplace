@@ -569,9 +569,64 @@ creditDataProcessed <- subset(creditDataProcessed, creditDataProcessed$dti < 100
 
 ## Attribute earliest_cr_line - David
 
+Let's see the structure of the attribute **earliest_cr_line**:
+
+```{r message = FALSE, warning = FALSE}
+str(creditData$earliest_cr_line)
+```
+Are there any NAs?
+
+```{r message = FALSE, warning = FALSE}
+sum(is.na(creditData$earliest_cr_line))
+```
+Reove the 25 NAs and convert the attribute into a factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$earliest_cr_line) != 1)
+creditDataProcessed$earliest_cr_line <- as.factor(creditDataProcessed$earliest_cr_line)
+str(creditDataProcessed$earliest_cr_line)
+```
+
 ## Attribute emp_length - David
 
+Let's see the structure of the attribute **emp_length**:
+
+```{r message = FALSE, warning = FALSE}
+str(creditData$emp_length)
+```
+Are there any NAs?
+
+```{r message = FALSE, warning = FALSE}
+sum(is.na(creditData$emp_length))
+```
+
+Let's see a frequency table for the attribute:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditDataProcessed$emp_length))
+```
+
+Convert the attribute into a factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$emp_length <- as.factor(creditDataProcessed$emp_length)
+str(creditDataProcessed$emp_length)
+```
+
 ## Attribute funded_amnt - David
+
+Let's get a summary:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$funded_amnt)
+```
+Let's plot a histogram:
+
+```{r message = FALSE, warning = FALSE}
+hist(creditData$funded_amnt)
+```
+
+No further cleansing required.
 
 ## Attribute funded_amnt_inv - Ibrahim
 
