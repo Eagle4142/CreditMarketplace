@@ -61,7 +61,7 @@ library(tidyverse)
 Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- read_delim("/Users/serhat/Downloads/LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+creditData <- read_delim("LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 knitr::kable(head(creditData, 1))
 ```
 
@@ -424,8 +424,8 @@ class(creditData$verification_status)
 Factorize the character value
 
 ```{r message = FALSE, warning = FALSE}
-vec_Verif <- as.factor(creditData$verification_status)
-class(vec_Verif)
+creditDataProcessed$verification_status <- as.numeric(factor(creditDataProcessed$verification_status))
+class(creditDataProcessed$verification_status)
 ```
 
 ## Attribute open_acc
@@ -445,7 +445,7 @@ Assign the median value into the NAs
 ```{r message = FALSE, warning = FALSE}
 med_open_acc <- median(creditData$open_acc, na.rm = TRUE)
 med_open_acc
-creditData[is.na(creditData$open_acc), "open_acc"] <- med_open_acc
+creditDataProcessed[is.na(creditDataProcessed$open_acc), "open_acc"] <- med_open_acc
 
 ```
 
@@ -465,15 +465,15 @@ class(creditData$last_credit_pull_d)
 Factorize the attribute last_credit_pull_d
 
 ```{r message = FALSE, warning = FALSE}
-vec_last_credit_pull_d <- as.factor(creditData$last_credit_pull_d)
-class(vec_last_credit_pull_d)
+creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d)
+class(creditDataProcessed$last_credit_pull_d)
 
 ```
 Remove the blanks
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- creditData[!is.na(creditData$last_credit_pull_d), ]
-creditData
+creditDataProcessed <- creditData[!is.na(creditData$last_credit_pull_d), ]
+creditDataProcessed
 
 ```
 
@@ -482,17 +482,17 @@ creditData
 Assign the median into the missing values
 
 ```{r message = FALSE, warning = FALSE}
-med_pub_rec <- median(creditData$pub_rec, na.rm = TRUE)
+med_pub_rec <- median(creditDataProcessed$pub_rec, na.rm = TRUE)
 med_pub_rec
-creditData[is.na(creditData$pub_rec), "pub_rec"] <- med_pub_rec
+creditDataProcessed[is.na(creditDataProcessed$pub_rec), "pub_rec"] <- med_pub_rec
 
 ```
 ## Attribute purpose
 
 Factorize the character
 ```{r message = FALSE, warning = FALSE}
-vec_purpose <- as.factor(creditData$purpose)
-class(vec_purpose)
+creditDataProcessed$purpose <- as.factor(creditDataProcessed$purpose)
+class(creditDataProcessed$purpose)
 
 ```
 
