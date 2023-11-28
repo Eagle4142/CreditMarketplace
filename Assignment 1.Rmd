@@ -61,7 +61,7 @@ library(tidyverse)
 Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
 
 ```{r message = FALSE, warning = FALSE}
-creditData <- read_delim("LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+creditData <- read_delim("/Users/serhat/Downloads/LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 knitr::kable(head(creditData, 1))
 ```
 
@@ -189,7 +189,7 @@ table(creditDataProcessed$title)
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$title <- as.factor(creditDataProcessed$title)
+creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
 ```
 
 ## Attribute zip_code
@@ -215,7 +215,7 @@ creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state)
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$combo_zip_addr <- as.factor(creditDataProcessed$combo_zip_addr)
+creditDataProcessed$combo_zip_addr <- as.numeric(creditDataProcessed$combo_zip_addr)
 ```
 
 ## Attribute acc_now_deling
@@ -340,7 +340,7 @@ We should keep this attribute in the dataset for the moment. The interest rate c
 Convert the character attribute into a categorical value (factor):
 
 ```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$addr_state <- as.factor(creditDataProcessed$addr_state)
+#creditDataProcessed$addr_state <- as.numeric(creditDataProcessed$addr_state)
 #str(creditDataProcessed$addr_state)
 ```
 
@@ -408,7 +408,7 @@ The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. T
 Converting attribute into factor:
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$application_type <- as.factor(creditDataProcessed$application_type)
+creditDataProcessed$application_type <- as.numeric(creditDataProcessed$application_type)
 str(creditDataProcessed$application_type)
 ```
 
@@ -465,7 +465,7 @@ class(creditData$last_credit_pull_d)
 Factorize the attribute last_credit_pull_d
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d)
+creditDataProcessed$last_credit_pull_d <- as.numeric(creditDataProcessed$last_credit_pull_d)
 class(creditDataProcessed$last_credit_pull_d)
 
 ```
@@ -491,7 +491,7 @@ creditDataProcessed[is.na(creditDataProcessed$pub_rec), "pub_rec"] <- med_pub_re
 
 Factorize the character
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$purpose <- as.factor(creditDataProcessed$purpose)
+creditDataProcessed$purpose <- as.numeric(creditDataProcessed$purpose)
 class(creditDataProcessed$purpose)
 
 ```
@@ -583,7 +583,7 @@ Reove the 25 NAs and convert the attribute into a factor:
 
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$earliest_cr_line) != 1)
-creditDataProcessed$earliest_cr_line <- as.factor(creditDataProcessed$earliest_cr_line)
+creditDataProcessed$earliest_cr_line <- as.numeric(creditDataProcessed$earliest_cr_line)
 str(creditDataProcessed$earliest_cr_line)
 ```
 
@@ -650,7 +650,7 @@ summary(creditData$home_ownership)
 plot(table(creditDataProcessed$home_ownership))
 ```
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$home_ownership <- as.factor(creditDataProcessed$home_ownership)
+creditDataProcessed$home_ownership <- as.numeric(creditDataProcessed$home_ownership)
 str(creditDataProcessed$home_ownership)
 ```
 
