@@ -465,7 +465,7 @@ class(creditData$last_credit_pull_d)
 Factorize the attribute last_credit_pull_d
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$last_credit_pull_d <- as.numeric(creditDataProcessed$last_credit_pull_d)
+creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d)
 class(creditDataProcessed$last_credit_pull_d)
 
 ```
@@ -686,5 +686,6 @@ print(variable_classes)
 
 ```{r message = FALSE, warning = FALSE}
 library(corrplot)
-corrplot(cor(creditDataProcessed), method = "color")
+creditDataProcessed$last_credit_pull_d <- as.numeric(creditDataProcessed$last_credit_pull_d)
+corrplot(cor(creditDataProcessed), method = "color",addCoef.col = 1,number.cex = 0.3, tl.cex = 0.3)
 ```
