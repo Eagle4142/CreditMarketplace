@@ -144,14 +144,14 @@ creditDataProcessed <- filter(creditDataProcessed, ! is.na(revol_util))
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData$revol_util, creditData$revol_util,
-     xlab = "revol_util", 
+plot(creditData$int_rate, creditData$revol_util,
+     xlab = "int_rate", 
      ylab = "revol_util",
      main = "Scatter plot of revol_util",
      pch = 20,
      col = "blue")
 ```
-It seems to have some outliers. We do remove values over 250.
+It seems to have some outliers. We do remove values over 200.
 
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- subset(creditDataProcessed, revol_util <= 200)
