@@ -122,6 +122,8 @@ creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
                                                        total_cu_tl,
                                                        inq_last_12m))
 ```
+Gwen: If there are 0's in the column, than the NA's could be an important attribute
+
 
 We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
 
@@ -243,8 +245,10 @@ Finally, we can factorise this variable
 ```
 
 Neuer Versuch:
+Next we want to take the coordinates of all zip codes and states. The data we want to integrate is from "https://simplemaps.com/data/us-zips". There the zip codes and states were combined the same way as above and with a lookup the coordinates where integrated into the creditDataProcessed data. 
+
 ```{r message = FALSE, warning = FALSE}
-excel_data <- read_excel("Zip Code.xlsx")
+excel_data <- read_excel("uszips.xlsx")
 ```
 
 ```{r message = FALSE, warning = FALSE}
@@ -275,7 +279,11 @@ plot(creditData$acc_now_delinq, creditData$acc_now_delinq,
      pch = 20,
      col = "blue")
 ```
-There doesn't seem to have outrageous outliers, so we keep the data as it is.
+There seems to have some outliers, so we remove these.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, acc_now_delinq = 14)
+```
 
 ## Attribute tot_coll_amt
 Now we can have a look at the attribute tot_coll_amt.
