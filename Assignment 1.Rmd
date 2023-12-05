@@ -144,9 +144,9 @@ creditDataProcessed <- filter(creditDataProcessed, ! is.na(revol_util))
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData$int_rate, creditData$revol_util,
-     xlab = "int_rate", 
-     ylab = "revol_util",
+plot(creditData$revol_util, creditData$int_rate,
+     xlab = "revol_util", 
+     ylab = "int_rate",
      main = "Scatter plot of revol_util",
      pch = 20,
      col = "blue")
@@ -158,12 +158,34 @@ creditDataProcessed <- subset(creditDataProcessed, revol_util <= 200)
 ```
 
 ## Attribute title
-Display a summary of the attribute **revol_util**
+Display the amount of levels of the attribute **title**
 ```{r message = FALSE, warning = FALSE}
-summary(creditData$title)
+length(unique(creditData$title))
 ```
 
-It is visible, that we have 56143 levels and this is way to much. Let's see which of them are occuring the most.
+How many do we have if we lower all the cases?
+```{r message = FALSE, warning = FALSE}
+creditData$title <- tolower(creditData$title)
+length(unique(creditData$title))
+```
+8818 less than with upper and lower cases
+
+There are still special characters in the variables. Let's remove them:
+```{r message = FALSE, warning = FALSE}
+creditData$title <- gsub("[^A-Za-z0-9 ]", "", creditData$title)
+length(unique(creditData$title))
+```
+
+1477 less.
+We can also remove the numbers.
+```{r message = FALSE, warning = FALSE}
+creditData$title <- gsub("[^A-Za-z ]", "", creditData$title)
+length(unique(creditData$title))
+```
+
+Again, 1209 less.
+
+Let's see which of them are occuring the most.
 
 ```{r message = FALSE, warning = FALSE}
 max(table(creditData$title))
@@ -171,15 +193,15 @@ FrequencyTitle <- round(prop.table(table(creditData$title))*100,2)
 table <- cbind(FrequencyTitle)
 ```
 
-In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67% and many of the categories are redundant due to upper and lower cases. So we are making every value in lower cases and take the top 30 categories for the predicition. The rest will be sum up as "others"
+In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67%. So we are taking the top 5 categories for the predicition. The rest will be sum up as "others"
 
 
 ```{r message = FALSE, warning = FALSE}
 category_frequency <- table(creditDataProcessed$title)
 sorted_frequency <- sort(category_frequency, decreasing = TRUE)
-top30 <- head(sorted_frequency, 30)
-top30_namen <- names(top30)
-creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top30_namen, creditDataProcessed$title, 'others')
+top5 <- head(sorted_frequency, 5)
+top5_namen <- names(top5)
+creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top5_namen, creditDataProcessed$title, 'Other')
 ```
 
 Now we can see which categories are left:
