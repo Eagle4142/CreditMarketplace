@@ -43,6 +43,7 @@ First of all we are going to load the packages required for this project.
 #install.packages("Hmisc")
 #install.packages("lmtest")
 #install.packages("openxlsx")
+#install.packages("readxl")
 
 library(car)
 library(corrplot)
@@ -53,6 +54,7 @@ library(lmtest)
 library(openxlsx)
 library(readr)
 library(tidyverse)
+library(readxl)
 ```
 
 
@@ -200,8 +202,8 @@ In the table we can see that debt consolidation and credit card refinancing are 
 category_frequency <- table(creditDataProcessed$title)
 sorted_frequency <- sort(category_frequency, decreasing = TRUE)
 top5 <- head(sorted_frequency, 5)
-top5_namen <- names(top5)
-creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top5_namen, creditDataProcessed$title, 'Other')
+top5_names <- names(top5)
+creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top5_names, creditDataProcessed$title, 'Other')
 ```
 
 Now we can see which categories are left:
@@ -211,7 +213,7 @@ table(creditDataProcessed$title)
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
+#creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
 ```
 
 ## Attribute zip_code
@@ -231,14 +233,25 @@ As we can see with the table function, some of the zip_code are occuring in mult
 
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed$zip_code <- substr(creditDataProcessed$zip_code, 1, 3)
-creditDataProcessed$combo_zip_addr <- paste0(creditDataProcessed$zip_code, creditDataProcessed$addr_state)
-creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state))
+creditDataProcessed$Combo <- paste0(creditDataProcessed$zip_code, creditDataProcessed$addr_state)
+#creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state))
 ```
 
 Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$combo_zip_addr <- as.numeric(creditDataProcessed$combo_zip_addr)
+#creditDataProcessed$Combo <- as.numeric(creditDataProcessed$Combo)
 ```
+
+Neuer Versuch:
+```{r message = FALSE, warning = FALSE}
+excel_data <- read_excel("Zip Code.xlsx")
+```
+
+```{r message = FALSE, warning = FALSE}
+excel_data <- select(excel_data,"LAT Average","LON Average","Combo")
+creditDataProcessed <- merge(creditDataProcessed, excel_data, by="Combo", all.x=TRUE)
+```
+
 
 ## Attribute acc_now_deling
 Let us first have a look at the variable:
