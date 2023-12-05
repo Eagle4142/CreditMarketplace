@@ -122,7 +122,7 @@ creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
                                                        total_cu_tl,
                                                        inq_last_12m))
 ```
-Gwen: If there are 0's in the column, than the NA's could be an important attribute
+Gwen: If there are 0's in the column, than the NA's could be important values. If NA's are important than replace it with something. dti_joint is also a difficult one. (NA example expiry date). verification_status_joint to watch too. Drop out in dti values above 100 (for example).   
 
 
 We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
@@ -217,6 +217,8 @@ Finally, we can factorise this variable
 ```{r message = FALSE, warning = FALSE}
 #creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
 ```
+
+Gwen: Model it first and then think about make some more improvements. Rule: Predictors and observations shouldn't be the same.
 
 ## Attribute zip_code
 
@@ -508,10 +510,11 @@ class(creditData$last_credit_pull_d)
 Factorize the attribute last_credit_pull_d
 
 ```{r message = FALSE, warning = FALSE}
-creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d)
+creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d) #as.factor = make it categorical
 class(creditDataProcessed$last_credit_pull_d)
-
 ```
+Gwen: Create for every categorical value a boxsplot to see a shift. Or use scatter plot.
+
 Remove the blanks
 
 ```{r message = FALSE, warning = FALSE}
@@ -725,10 +728,11 @@ variable_classes <- sapply(creditDataProcessed, class)
 print(variable_classes)
 ```
 
-
-
 ```{r message = FALSE, warning = FALSE}
 library(corrplot)
 creditDataProcessed$last_credit_pull_d <- as.numeric(creditDataProcessed$last_credit_pull_d)
 corrplot(cor(creditDataProcessed), method = "color",addCoef.col = 1,number.cex = 0.3, tl.cex = 0.3)
 ```
+
+Gwen: Start with trees instead of regression variables. Because no numeric and categorical difference and than no check for collinearity. 
+Accuracy range: Gwen will check
