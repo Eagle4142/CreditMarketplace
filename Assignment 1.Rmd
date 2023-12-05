@@ -102,10 +102,10 @@ Next we are removing all variables with more than 200'000 blank values.
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
                                                        desc,
-                                                       dti_joint,
-                                                       mths_since_last_delinq,
-                                                       mths_since_last_major_derog,
-                                                       mths_since_last_record,
+                                                       dti_joint, #Watch out out for this
+                                                       mths_since_last_delinq, #Watch out out for this
+                                                       mths_since_last_major_derog, #Watch out out for this
+                                                       mths_since_last_record, #Watch out out for this
                                                        open_acc_6m,
                                                        open_il_6m,
                                                        open_il_12m,
@@ -736,3 +736,9 @@ corrplot(cor(creditDataProcessed), method = "color",addCoef.col = 1,number.cex =
 
 Gwen: Start with trees instead of regression variables. Because no numeric and categorical difference and than no check for collinearity. 
 Accuracy range: Gwen will check
+
+Gradient Boosting --> Serhat
+Random Forrest --> Ibrahim
+Decision Trees --> Mohamed
+
+14.12.23
