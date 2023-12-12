@@ -1,0 +1,744 @@
+##To Do:
+By Thursday
+- Variable for Exploration: creditData
+- Variable for Processing: creditDataProcessed
+  - Serhat done
+
+By Thursday morning
+- Correlation matrix
+- Multicollinearity
+- Mail to Gwen for coaching
+
+---
+title: "Assignment 1"
+author: "David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br>"
+date: "`r Sys.time()`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Business Understanding
+
+Text **to follow** here.
+
+# Setup
+## Load Required Packages
+
+First of all we are going to load the packages required for this project.
+
+```{r message = FALSE, warning = FALSE}
+#install.packages("readr")
+#install.packages("tidyverse")
+#install.packages("formattable")
+#install.packages("car")
+#install.packages("corrplot")
+#install.packages("dbplyr")
+#install.packages("formattable")
+#install.packages("Hmisc")
+#install.packages("lmtest")
+#install.packages("openxlsx")
+#install.packages("readxl")
+
+library(car)
+library(corrplot)
+library(dbplyr)
+library(formattable)
+library(Hmisc)
+library(lmtest)
+library(openxlsx)
+library(readr)
+library(tidyverse)
+library(readxl)
+```
+
+
+## Load Data
+
+Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
+
+```{r message = FALSE, warning = FALSE}
+creditData <- read_delim("/Users/serhat/Downloads/LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+knitr::kable(head(creditData, 1))
+```
+
+## Structure of the Dataset
+
+```{r message = FALSE, warning = FALSE, echo=FALSE, results = 'asis'}
+cat(paste0("The dataset has **", nrow(creditData), "** rows and **", ncol(creditData), "** columns."))
+```
+
+## Data removal
+The decision to drop certain variables from the dataset for predicting the interest rate of new loan applications is based on their unavailability or irrelevance at the time of prediction. First of all we are going to drop these variables:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditData,select=-c(collection_recovery_fee,
+                                                       installment,
+                                                       issue_d,
+                                                       last_pymnt_amnt,
+                                                       last_pymnt_d,
+                                                       loan_status,
+                                                       next_pymnt_d,
+                                                       out_prncp,
+                                                       out_prncp_inv,
+                                                       pymnt_plan,
+                                                       recoveries,
+                                                       term,
+                                                       total_pymnt,
+                                                       total_pymnt_inv,
+                                                       total_rec_int,
+                                                       total_rec_late_fee,
+                                                       total_rec_prncp,emp_title))
+```
+
+
+Next we are removing all variables with more than 200'000 blank values.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
+                                                       desc,
+                                                       dti_joint, #Watch out out for this
+                                                       mths_since_last_delinq, #Watch out out for this
+                                                       mths_since_last_major_derog, #Watch out out for this
+                                                       mths_since_last_record, #Watch out out for this
+                                                       open_acc_6m,
+                                                       open_il_6m,
+                                                       open_il_12m,
+                                                       open_il_24m,
+                                                       mths_since_rcnt_il,
+                                                       total_bal_il,
+                                                       il_util,
+                                                       open_rv_12m,
+                                                       open_rv_24m,
+                                                       max_bal_bc,
+                                                       all_util,
+                                                       total_rev_hi_lim,
+                                                       inq_fi,
+                                                       total_cu_tl,
+                                                       inq_last_12m))
+```
+Gwen: If there are 0's in the column, than the NA's could be important values. If NA's are important than replace it with something. dti_joint is also a difficult one. (NA example expiry date). verification_status_joint to watch too. Drop out in dti values above 100 (for example).   
+
+
+We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed,select=-c(policy_code,url,verification_status_joint))
+```
+# Explore Data
+
+## Attribute revol_util
+
+Display a summary of the attribute **revol_util**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$revol_util)
+```
+
+As we can see, this attribute has 454 blanks which we are going to remove entirely from the dataset.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- filter(creditDataProcessed, ! is.na(revol_util))
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$revol_util, creditData$int_rate,
+     xlab = "revol_util", 
+     ylab = "int_rate",
+     main = "Scatter plot of revol_util",
+     pch = 20,
+     col = "blue")
+```
+It seems to have some outliers. We do remove values over 200.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, revol_util <= 200)
+```
+
+## Attribute title
+Display the amount of levels of the attribute **title**
+```{r message = FALSE, warning = FALSE}
+length(unique(creditData$title))
+```
+
+How many do we have if we lower all the cases?
+```{r message = FALSE, warning = FALSE}
+creditData$title <- tolower(creditData$title)
+length(unique(creditData$title))
+```
+8818 less than with upper and lower cases
+
+There are still special characters in the variables. Let's remove them:
+```{r message = FALSE, warning = FALSE}
+creditData$title <- gsub("[^A-Za-z0-9 ]", "", creditData$title)
+length(unique(creditData$title))
+```
+
+1477 less.
+We can also remove the numbers.
+```{r message = FALSE, warning = FALSE}
+creditData$title <- gsub("[^A-Za-z ]", "", creditData$title)
+length(unique(creditData$title))
+```
+
+Again, 1209 less.
+
+Let's see which of them are occuring the most.
+
+```{r message = FALSE, warning = FALSE}
+max(table(creditData$title))
+FrequencyTitle <- round(prop.table(table(creditData$title))*100,2)
+table <- cbind(FrequencyTitle)
+```
+
+In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67%. So we are taking the top 5 categories for the predicition. The rest will be sum up as "others"
+
+
+```{r message = FALSE, warning = FALSE}
+category_frequency <- table(creditDataProcessed$title)
+sorted_frequency <- sort(category_frequency, decreasing = TRUE)
+top5 <- head(sorted_frequency, 5)
+top5_names <- names(top5)
+creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top5_names, creditDataProcessed$title, 'Other')
+```
+
+Now we can see which categories are left:
+```{r message = FALSE, warning = FALSE}
+table(creditDataProcessed$title)
+```
+
+Finally, we can factorise this variable
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
+```
+
+Gwen: Model it first and then think about make some more improvements. Rule: Predictors and observations shouldn't be the same.
+
+## Attribute zip_code
+
+Let us first have a look at the variable:
+```{r message = FALSE, warning = FALSE}
+summary(creditData$zip_code)
+head(creditData$zip_code)
+```
+Let's have a more in depth view on the data:
+
+```{r message = FALSE, warning = FALSE}
+tab <- table(creditData$zip_code, creditData$addr_state)
+```
+
+As we can see with the table function, some of the zip_code are occuring in multiple states. Therefore, it makes sense to combine the zip_code and addr_state variable to create truely unique values. This way it could give us a better prediction for the interest rate.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$zip_code <- substr(creditDataProcessed$zip_code, 1, 3)
+creditDataProcessed$Combo <- paste0(creditDataProcessed$zip_code, creditDataProcessed$addr_state)
+#creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state))
+```
+
+Finally, we can factorise this variable
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$Combo <- as.numeric(creditDataProcessed$Combo)
+```
+
+Neuer Versuch:
+Next we want to take the coordinates of all zip codes and states. The data we want to integrate is from "https://simplemaps.com/data/us-zips". There the zip codes and states were combined the same way as above and with a lookup the coordinates where integrated into the creditDataProcessed data. 
+
+```{r message = FALSE, warning = FALSE}
+excel_data <- read_excel("uszips.xlsx")
+```
+
+```{r message = FALSE, warning = FALSE}
+excel_data <- select(excel_data,"LAT Average","LON Average","Combo")
+creditDataProcessed <- merge(creditDataProcessed, excel_data, by="Combo", all.x=TRUE)
+```
+
+
+## Attribute acc_now_deling
+Let us first have a look at the variable:
+```{r message = FALSE, warning = FALSE}
+summary(creditData$acc_now_delinq)
+```
+
+More than 75% of the data seems to have the value 0. We can keep it as it is for further analysis. But we can check how many values are higher than zero to understand the data better.
+
+```{r message = FALSE, warning = FALSE}
+Higher0 <- sum(creditDataProcessed$acc_now_delinq > 0, na.rm = TRUE)
+print(Higher0)
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$acc_now_delinq, creditData$acc_now_delinq,
+     xlab = "acc_now_delinq", 
+     ylab = "acc_now_delinq",
+     main = "Scatter plot of acc_now_delinq",
+     pch = 20,
+     col = "blue")
+```
+There seems to have some outliers, so we remove these.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, acc_now_delinq = 14)
+```
+
+## Attribute tot_coll_amt
+Now we can have a look at the attribute tot_coll_amt.
+```{r message = FALSE, warning = FALSE}
+summary(creditData$tot_coll_amt)
+```
+There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
+
+```{r message = FALSE, warning = FALSE}
+zero_in_column <- sum(creditData$tot_coll_amt == 0, na.rm = TRUE)
+print(zero_in_column)
+```
+
+630268 cells with the value 0. It makes absolutely sense to replace the NA's with the median, which would be 0.
+
+```{r message = FALSE, warning = FALSE}
+median_tot_coll_amt <- median(creditDataProcessed$tot_coll_amt, na.rm = TRUE)
+
+creditDataProcessed$tot_coll_amt[is.na(creditDataProcessed$tot_coll_amt)] <- median_tot_coll_amt
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$tot_coll_amt, creditData$tot_coll_amt,
+     xlab = "tot_coll_amt", 
+     ylab = "tot_coll_amt",
+     main = "Scatter plot of tot_coll_amt",
+     pch = 20,
+     col = "blue")
+```
+There is an outlier, so we are removing it.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, tot_coll_amt <= 2000000)
+```
+
+## Attribute tot_cur_bal
+
+Now we can have a look at the attribute tot_cur_bal.
+```{r message = FALSE, warning = FALSE}
+summary(creditData$tot_cur_bal)
+```
+There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
+
+```{r message = FALSE, warning = FALSE}
+zero_in_column <- sum(creditData$tot_cur_bal == 0, na.rm = TRUE)
+print(zero_in_column)
+```
+
+Only 102 cells with the value 0. It makes absolutely sense to replace this time the NA's with the mean, which would be 139508. The distribution between the value seems also alright.
+
+```{r message = FALSE, warning = FALSE}
+mean_tot_cur_bal <- mean(creditDataProcessed$tot_cur_bal, na.rm = TRUE)
+
+creditDataProcessed$tot_cur_bal[is.na(creditDataProcessed$tot_cur_bal)] <- mean_tot_cur_bal
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$tot_cur_bal, creditData$tot_cur_bal,
+     xlab = "tot_cur_bal", 
+     ylab = "tot_cur_bal",
+     main = "Scatter plot of tot_cur_bal",
+     pch = 20,
+     col = "blue")
+```
+There is an outlier, so we are removing it.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, tot_cur_bal <= 4000000)
+```
+
+## Attribute addr_state
+
+Display a summary of the attribute **addr_state**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$addr_state)
+```
+
+Plot the distribution of the attribute **addr_state**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$addr_state))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$addr_state)
+```
+
+**Conclusion**:
+
+We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
+
+Convert the character attribute into a categorical value (factor):
+
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$addr_state <- as.numeric(creditDataProcessed$addr_state)
+#str(creditDataProcessed$addr_state)
+```
+
+
+## Attribute annual_inc
+
+Display a summary of the attribute **annual_inc**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$annual_inc)
+```
+
+Plot a historgram for **annual_inc**, where the annual income is higher than 500'000:
+
+```{r message = FALSE, warning = FALSE}
+hist((filter(creditData, annual_inc > 500000)$annual_inc), breaks = 1000)
+```
+
+
+
+As can be seen in the histogram, there are a few very high values, so we want to see if these are errors in our dataset. Therefore we are going to list the **emp_title** and **verification_status** for the top 50 values.
+
+```{r message = FALSE, warning = FALSE}
+
+select(head(creditData[order(creditData$annual_inc, decreasing = TRUE), ], 50), annual_inc, emp_title, verification_status)
+```
+
+Looks like there are indeed some unrealistic values in our dataset: A nurse with an annual income of USD 9.5 million or a commercial driver with USD 8.9 million seems to be way above the expected income, although source was verified.
+
+**Conclusion**:
+
+We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
+
+Remove NAs and overwrite values > 800'000 with 65'000:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$annual_inc) != 1)
+creditDataProcessed$annual_inc <- if_else(creditDataProcessed$annual_inc > 800000, 65000, creditDataProcessed$annual_inc)
+```
+
+## Attribute application_type
+
+Display a summary of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$application_type)
+```
+
+Plot the distribution of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$application_type))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$application_type)
+```
+
+**Conclusion**:
+
+The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value or factorized.
+
+Converting attribute into factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$application_type <- as.numeric(creditDataProcessed$application_type)
+str(creditDataProcessed$application_type)
+```
+
+
+## Attribute verification_status
+
+Display a summary of the attribute **verification_status**:
+
+```{r message = FALSE, warning = FALSE}
+count(creditData[is.na(creditData$verification_status), ])
+class(creditData$verification_status)
+```
+Factorize the character value
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$verification_status <- as.numeric(factor(creditDataProcessed$verification_status))
+class(creditDataProcessed$verification_status)
+```
+
+## Attribute open_acc
+
+Display the attribute open_acc
+```{r message = FALSE, warning = FALSE}
+summary(creditData$open_acc)
+```
+
+Display the class of the attribute open_acc:
+
+```{r message = FALSE, warning = FALSE}
+class(creditData$open_acc)
+```
+Assign the median value into the NAs
+
+```{r message = FALSE, warning = FALSE}
+med_open_acc <- median(creditData$open_acc, na.rm = TRUE)
+med_open_acc
+creditDataProcessed[is.na(creditDataProcessed$open_acc), "open_acc"] <- med_open_acc
+
+```
+
+
+## Attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$last_credit_pull_d)
+
+```
+Display the class
+
+```{r message = FALSE, warning = FALSE}
+
+class(creditData$last_credit_pull_d)
+```
+Factorize the attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d) #as.factor = make it categorical
+class(creditDataProcessed$last_credit_pull_d)
+```
+Gwen: Create for every categorical value a boxsplot to see a shift. Or use scatter plot.
+
+Remove the blanks
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- creditDataProcessed[!is.na(creditDataProcessed$last_credit_pull_d), ]
+creditDataProcessed
+
+```
+
+## Attribute pub_rec
+
+Assign the median into the missing values
+
+```{r message = FALSE, warning = FALSE}
+med_pub_rec <- median(creditDataProcessed$pub_rec, na.rm = TRUE)
+med_pub_rec
+creditDataProcessed[is.na(creditDataProcessed$pub_rec), "pub_rec"] <- med_pub_rec
+
+```
+## Attribute purpose
+
+Factorize the character
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$purpose <- as.numeric(creditDataProcessed$purpose)
+class(creditDataProcessed$purpose)
+
+```
+
+## Attribute collections_12_mths_ex_med
+
+Display a summary of the attribute **collections_12_mths_ex_med**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$collections_12_mths_ex_med)
+```
+
+As shown, it's a numerical value with 122 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$collections_12_mths_ex_med)
+```
+**Conclusion**
+As expected the number of collections decreases and the majority of cases have not had a collection. The 122 NAs should be removed.
+
+Removing the 122 NAs:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$collections_12_mths_ex_med) != 1)
+```
+
+
+## Attribute delinq_2yrs
+
+Display a summary for the atrribute **delinq_2yrs**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$delinq_2yrs)
+```
+As shown, it's a numerical value with 25 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$delinq_2yrs)
+```
+**Conclusion**
+Only integers (whole numbers) are used. Most of the records (645151) did not have a 30+ days past-due incidences of delinquency in the borrower's credit file for the past 2 years. Densitiy decreases the higher the number of  incidences of delinquency.
+
+Removing the 25 NAs:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$delinq_2yrs) != 1)
+```
+
+
+## Attribute dti
+
+Display a summary for the atrribute **dti**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$dti)
+```
+Probably some outliers in the data:
+
+```{r message = FALSE, warning = FALSE}
+plot(creditData$dti)
+```
+
+Let's display the top 100 values for dti:
+
+```{r message = FALSE, warning = FALSE}
+head((creditData %>% arrange(desc(creditData$dti)))$dti, 100)
+```
+
+**Conclusion**
+Should probably remove all the records with values equal to or above 100 for dti:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, creditDataProcessed$dti < 100)
+```
+
+## Attribute earliest_cr_line - David
+
+Let's see the structure of the attribute **earliest_cr_line**:
+
+```{r message = FALSE, warning = FALSE}
+str(creditData$earliest_cr_line)
+```
+Are there any NAs?
+
+```{r message = FALSE, warning = FALSE}
+sum(is.na(creditData$earliest_cr_line))
+```
+Reove the 25 NAs and convert the attribute into a factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$earliest_cr_line) != 1)
+creditDataProcessed$earliest_cr_line <- as.numeric(creditDataProcessed$earliest_cr_line)
+str(creditDataProcessed$earliest_cr_line)
+```
+
+## Attribute emp_length - David
+
+Let's see the structure of the attribute **emp_length**:
+
+```{r message = FALSE, warning = FALSE}
+str(creditData$emp_length)
+```
+Are there any NAs?
+
+```{r message = FALSE, warning = FALSE}
+sum(is.na(creditData$emp_length))
+```
+
+Let's see a frequency table for the attribute:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditDataProcessed$emp_length))
+```
+
+Convert the attribute into a factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$emp_length <- as.numeric(as.character(creditDataProcessed$emp_length))
+str(creditDataProcessed$emp_length)
+```
+
+## Attribute funded_amnt - David
+
+Let's get a summary:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$funded_amnt)
+```
+Let's plot a histogram:
+
+```{r message = FALSE, warning = FALSE}
+hist(creditData$funded_amnt)
+```
+
+
+
+## Attribute funded_amnt_inv - Ibrahim
+
+Display the summary of funded_amnt_inv
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$funded_amnt_inv)
+```
+Display the histogram of the feature to see distribution of values
+
+```{r message = FALSE, warning = FALSE}
+hist(creditData$funded_amnt_inv)
+```
+
+## Attribute home_ownership - Ibrahim
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$home_ownership)
+```
+```{r message = FALSE, warning = FALSE}
+plot(table(creditDataProcessed$home_ownership))
+```
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$home_ownership <- as.numeric(creditDataProcessed$home_ownership)
+str(creditDataProcessed$home_ownership)
+```
+
+
+
+## Attribute initial_list_status - Ibrahim
+
+Let's see how many different status we have
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$initial_list_status)
+```
+
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$initial_list_status)
+```
+
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$initial_list_status <- as.numeric(creditDataProcessed$initial_list_status == "f")
+print(creditDataProcessed$initial_list_status)
+```
+
+Display all feature classes that we have chosen
+
+```{r message = FALSE, warning = FALSE}
+variable_classes <- sapply(creditDataProcessed, class)
+print(variable_classes)
+```
+
+```{r message = FALSE, warning = FALSE}
+library(corrplot)
+creditDataProcessed$last_credit_pull_d <- as.numeric(creditDataProcessed$last_credit_pull_d)
+corrplot(cor(creditDataProcessed), method = "color",addCoef.col = 1,number.cex = 0.3, tl.cex = 0.3)
+```
+
+Gwen: Start with trees instead of regression variables. Because no numeric and categorical difference and than no check for collinearity. 
+Accuracy range: Gwen will check
+
+Gradient Boosting --> Serhat
+Random Forrest --> Ibrahim
+Decision Trees --> Mohamed
+
+14.12.23
