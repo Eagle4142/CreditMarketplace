@@ -1,0 +1,1122 @@
+---
+title: "Assignment 1"
+author: "David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br>"
+date: "`r Sys.time()`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Business Understanding
+
+Text **to follow** here.
+
+# Setup
+## Load Required Packages
+
+First of all we are going to load the packages required for this project.
+
+```{r message = FALSE, warning = FALSE}
+#install.packages("readr")
+#install.packages("tidyverse")
+#install.packages("formattable")
+#install.packages("car")
+#install.packages("corrplot")
+#install.packages("dbplyr")
+#install.packages("formattable")
+#install.packages("Hmisc")
+#install.packages("lmtest")
+#install.packages("openxlsx")
+#install.packages("readxl")
+#install.packages("ggplot2")
+#install.packages("tree")
+
+library(car)
+library(corrplot)
+library(dbplyr)
+library(formattable)
+library(Hmisc)
+library(lmtest)
+library(openxlsx)
+library(readr)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(tree)
+```
+
+
+## Load Data
+
+Next we are going to load the data from the CSV file "LCdata.csv" and display the first row to get a rough idea about the data.
+
+```{r message = FALSE, warning = FALSE}
+creditData <- read_delim("/Users/serhat/Downloads/LCdata.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+knitr::kable(head(creditData, 1))
+```
+
+## Structure of the Dataset
+
+```{r message = FALSE, warning = FALSE, echo=FALSE, results = 'asis'}
+cat(paste0("The dataset has **", nrow(creditData), "** rows and **", ncol(creditData), "** columns."))
+```
+
+## Data removal
+The decision to drop certain variables from the dataset for predicting the interest rate of new loan applications is based on their unavailability or irrelevance at the time of prediction. First of all we are going to drop these variables:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditData,select=-c(collection_recovery_fee,
+                                                       installment,
+                                                       issue_d,
+                                                       last_pymnt_amnt,
+                                                       last_pymnt_d,
+                                                       loan_status,
+                                                       next_pymnt_d,
+                                                       out_prncp,
+                                                       out_prncp_inv,
+                                                       pymnt_plan,
+                                                       recoveries,
+                                                       term,
+                                                       total_pymnt,
+                                                       total_pymnt_inv,
+                                                       total_rec_int,
+                                                       total_rec_late_fee,
+                                                       total_rec_prncp))
+```
+
+
+Next we are removing all variables with more than 200'000 blank values.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
+                                                       desc,
+                                                       dti_joint, #Watch out out for this
+                                                       mths_since_last_delinq, #Watch out out for this
+                                                       mths_since_last_major_derog, #Watch out out for this
+                                                       mths_since_last_record, #Watch out out for this
+                                                       open_acc_6m,
+                                                       open_il_6m,
+                                                       open_il_12m,
+                                                       open_il_24m,
+                                                       mths_since_rcnt_il,
+                                                       total_bal_il,
+                                                       il_util,
+                                                       open_rv_12m,
+                                                       open_rv_24m,
+                                                       max_bal_bc,
+                                                       all_util,
+                                                       total_rev_hi_lim,
+                                                       inq_fi,
+                                                       total_cu_tl,
+                                                       inq_last_12m,
+                                                       id,
+                                                       member_id,
+                                                       emp_title))
+```
+Gwen: If there are 0's in the column, than the NA's could be important values. If NA's are important than replace it with something. dti_joint is also a difficult one. (NA example expiry date). verification_status_joint to watch too. Drop out in dti values above 100 (for example).   
+
+
+We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed,select=-c(policy_code,url,verification_status_joint))
+```
+# Explore Data
+
+## Attribute revol_util
+
+Display a summary of the attribute **revol_util**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$revol_util)
+```
+
+As we can see, this attribute has 454 blanks which we are going to remove entirely from the dataset.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- filter(creditDataProcessed, ! is.na(revol_util))
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$revol_util, creditData$int_rate,
+     xlab = "revol_util", 
+     ylab = "int_rate",
+     main = "Scatter plot of revol_util",
+     pch = 20,
+     col = "blue")
+```
+It seems to have some outliers. We do remove values over 200.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, revol_util <= 200)
+```
+
+## Attribute title
+Display the amount of levels of the attribute **title**
+```{r message = FALSE, warning = FALSE}
+length(unique(creditData$title))
+```
+
+How many do we have if we lower all the cases?
+```{r message = FALSE, warning = FALSE}
+creditData$title <- tolower(creditData$title)
+length(unique(creditData$title))
+```
+8818 less than with upper and lower cases
+
+There are still special characters in the variables. Let's remove them:
+```{r message = FALSE, warning = FALSE}
+creditData$title <- gsub("[^A-Za-z0-9 ]", "", creditData$title)
+length(unique(creditData$title))
+```
+
+1477 less.
+We can also remove the numbers.
+```{r message = FALSE, warning = FALSE}
+creditData$title <- gsub("[^A-Za-z ]", "", creditData$title)
+length(unique(creditData$title))
+```
+
+Again, 1209 less.
+
+Let's see which of them are occuring the most.
+
+```{r message = FALSE, warning = FALSE}
+max(table(creditData$title))
+FrequencyTitle <- round(prop.table(table(creditData$title))*100,2)
+table <- cbind(FrequencyTitle)
+```
+
+In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67%. So we are taking the top 5 categories for the predicition. The rest will be sum up as "others"
+
+
+```{r message = FALSE, warning = FALSE}
+category_frequency <- table(creditDataProcessed$title)
+sorted_frequency <- sort(category_frequency, decreasing = TRUE)
+top5 <- head(sorted_frequency, 5)
+top5_names <- names(top5)
+creditDataProcessed$title <- ifelse(creditDataProcessed$title %in% top5_names, creditDataProcessed$title, 'Other')
+```
+
+Now we can see which categories are left:
+```{r message = FALSE, warning = FALSE}
+table(creditDataProcessed$title)
+```
+
+Finally, we can factorise this variable
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
+```
+
+Gwen: Model it first and then think about make some more improvements. Rule: Predictors and observations shouldn't be the same.
+
+## Attribute zip_code
+
+Let us first have a look at the variable:
+```{r message = FALSE, warning = FALSE}
+summary(creditData$zip_code)
+head(creditData$zip_code)
+```
+Let's have a more in depth view on the data:
+
+```{r message = FALSE, warning = FALSE}
+tab <- table(creditData$zip_code, creditData$addr_state)
+```
+
+As we can see with the table function, some of the zip_code are occuring in multiple states. Therefore, it makes sense to combine the zip_code and addr_state variable to create truely unique values. This way it could give us a better prediction for the interest rate.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$zip_code <- substr(creditDataProcessed$zip_code, 1, 3)
+creditDataProcessed$Combo <- paste0(creditDataProcessed$zip_code, creditDataProcessed$addr_state)
+#creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state))
+```
+
+Finally, we can factorise this variable
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$Combo <- as.numeric(creditDataProcessed$Combo)
+```
+
+Neuer Versuch:
+Next we want to take the coordinates of all zip codes and states. The data we want to integrate is from "https://simplemaps.com/data/us-zips". There the zip codes and states were combined the same way as above and with a lookup the coordinates where integrated into the creditDataProcessed data. 
+
+```{r message = FALSE, warning = FALSE}
+#excel_data <- read_excel("uszips.xlsx")
+```
+
+```{r message = FALSE, warning = FALSE}
+#excel_data <- select(excel_data,"LAT Average","LON Average","Combo")
+#creditDataProcessed <- merge(creditDataProcessed, excel_data, by="Combo", all.x=TRUE)
+```
+
+
+## Attribute acc_now_deling
+Let us first have a look at the variable:
+```{r message = FALSE, warning = FALSE}
+summary(creditData$acc_now_delinq)
+```
+
+More than 75% of the data seems to have the value 0. We can keep it as it is for further analysis. But we can check how many values are higher than zero to understand the data better.
+
+```{r message = FALSE, warning = FALSE}
+Higher0 <- sum(creditDataProcessed$acc_now_delinq > 0, na.rm = TRUE)
+print(Higher0)
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$acc_now_delinq, creditData$acc_now_delinq,
+     xlab = "acc_now_delinq", 
+     ylab = "acc_now_delinq",
+     main = "Scatter plot of acc_now_delinq",
+     pch = 20,
+     col = "blue")
+```
+There seems to have some outliers, so we remove these.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, acc_now_delinq <= 8)
+```
+
+## Attribute tot_coll_amt
+Now we can have a look at the attribute tot_coll_amt.
+```{r message = FALSE, warning = FALSE}
+summary(creditData$tot_coll_amt)
+```
+There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
+
+```{r message = FALSE, warning = FALSE}
+zero_in_column <- sum(creditData$tot_coll_amt == 0, na.rm = TRUE)
+print(zero_in_column)
+```
+
+630268 cells with the value 0. It makes absolutely sense to replace the NA's with the median, which would be 0.
+
+```{r message = FALSE, warning = FALSE}
+median_tot_coll_amt <- median(creditDataProcessed$tot_coll_amt, na.rm = TRUE)
+
+creditDataProcessed$tot_coll_amt[is.na(creditDataProcessed$tot_coll_amt)] <- median_tot_coll_amt
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$tot_coll_amt, creditData$tot_coll_amt,
+     xlab = "tot_coll_amt", 
+     ylab = "tot_coll_amt",
+     main = "Scatter plot of tot_coll_amt",
+     pch = 20,
+     col = "blue")
+```
+There is an outlier, so we are removing it.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, tot_coll_amt <= 2000000)
+```
+
+## Attribute tot_cur_bal
+
+Now we can have a look at the attribute tot_cur_bal.
+```{r message = FALSE, warning = FALSE}
+summary(creditData$tot_cur_bal)
+```
+There are many NA's with 63276 but we don't want to drop the variable since it is less than 10% of the whole data set. Let's see how many values are exactly 0.
+
+```{r message = FALSE, warning = FALSE}
+zero_in_column <- sum(creditData$tot_cur_bal == 0, na.rm = TRUE)
+print(zero_in_column)
+```
+
+Only 102 cells with the value 0. It makes absolutely sense to replace this time the NA's with the mean, which would be 139508. The distribution between the value seems also alright.
+
+```{r message = FALSE, warning = FALSE}
+mean_tot_cur_bal <- mean(creditDataProcessed$tot_cur_bal, na.rm = TRUE)
+
+creditDataProcessed$tot_cur_bal[is.na(creditDataProcessed$tot_cur_bal)] <- mean_tot_cur_bal
+```
+
+We should also check if there are any outliers:
+```{r message = FALSE, warning = FALSE}
+plot(creditData$tot_cur_bal, creditData$tot_cur_bal,
+     xlab = "tot_cur_bal", 
+     ylab = "tot_cur_bal",
+     main = "Scatter plot of tot_cur_bal",
+     pch = 20,
+     col = "blue")
+```
+There is an outlier, so we are removing it.
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, tot_cur_bal <= 4000000)
+```
+
+## Attribute addr_state
+
+Display a summary of the attribute **addr_state**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$addr_state)
+```
+
+Plot the distribution of the attribute **addr_state**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$addr_state))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$addr_state)
+```
+
+**Conclusion**:
+
+We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
+
+Convert the character attribute into a categorical value (factor):
+
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$addr_state <- as.numeric(creditDataProcessed$addr_state)
+#str(creditDataProcessed$addr_state)
+```
+
+
+## Attribute annual_inc
+
+Display a summary of the attribute **annual_inc**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$annual_inc)
+```
+
+Plot a historgram for **annual_inc**, where the annual income is higher than 500'000:
+
+```{r message = FALSE, warning = FALSE}
+hist((filter(creditData, annual_inc > 500000)$annual_inc), breaks = 1000)
+```
+
+
+
+As can be seen in the histogram, there are a few very high values, so we want to see if these are errors in our dataset. Therefore we are going to list the **emp_title** and **verification_status** for the top 50 values.
+
+```{r message = FALSE, warning = FALSE}
+
+select(head(creditData[order(creditData$annual_inc, decreasing = TRUE), ], 50), annual_inc, emp_title, verification_status)
+```
+
+Looks like there are indeed some unrealistic values in our dataset: A nurse with an annual income of USD 9.5 million or a commercial driver with USD 8.9 million seems to be way above the expected income, although source was verified.
+
+**Conclusion**:
+
+We should keep this attribute in the dataset for the moment. The interest rate would probably depend on the borrower's annual income, as this tells us something about the borrower's creditworthiness. The 4 records with NA for the annual income should be removed. We should also consider filling the values above a certain threshold (e.g. 800'000) with the median (i.e., 65'000).
+
+Remove NAs and overwrite values > 800'000 with 65'000:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$annual_inc) != 1)
+creditDataProcessed$annual_inc <- if_else(creditDataProcessed$annual_inc > 800000, 65000, creditDataProcessed$annual_inc)
+```
+
+## Attribute application_type
+
+Display a summary of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$application_type)
+```
+
+Plot the distribution of the attribute **application_type**:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditData$application_type))
+```
+
+Build a contingency table of the counts at each combination of factor levels.
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$application_type)
+```
+
+**Conclusion**:
+
+The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value or factorized.
+
+Converting attribute into factor:
+
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$application_type <- as.numeric(creditDataProcessed$application_type)
+str(creditDataProcessed$application_type)
+```
+
+
+## Attribute verification_status
+
+Display a summary of the attribute **verification_status**:
+
+```{r message = FALSE, warning = FALSE}
+count(creditData[is.na(creditData$verification_status), ])
+class(creditData$verification_status)
+```
+Factorize the character value
+
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$verification_status <- as.numeric(factor(creditDataProcessed$verification_status))
+class(creditDataProcessed$verification_status)
+```
+
+## Attribute open_acc
+
+Display the attribute open_acc
+```{r message = FALSE, warning = FALSE}
+summary(creditData$open_acc)
+```
+
+Display the class of the attribute open_acc:
+
+```{r message = FALSE, warning = FALSE}
+class(creditData$open_acc)
+```
+Assign the median value into the NAs
+
+```{r message = FALSE, warning = FALSE}
+med_open_acc <- median(creditData$open_acc, na.rm = TRUE)
+med_open_acc
+creditDataProcessed[is.na(creditDataProcessed$open_acc), "open_acc"] <- med_open_acc
+
+```
+
+
+## Attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$last_credit_pull_d)
+
+```
+Display the class
+
+```{r message = FALSE, warning = FALSE}
+
+class(creditData$last_credit_pull_d)
+```
+Factorize the attribute last_credit_pull_d
+
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d) #as.factor = make it categorical
+class(creditDataProcessed$last_credit_pull_d)
+```
+Gwen: Create for every categorical value a boxsplot to see a shift. Or use scatter plot.
+
+Remove the blanks
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- creditDataProcessed[!is.na(creditDataProcessed$last_credit_pull_d), ]
+creditDataProcessed
+
+```
+
+## Attribute pub_rec
+
+Assign the median into the missing values
+
+```{r message = FALSE, warning = FALSE}
+med_pub_rec <- median(creditDataProcessed$pub_rec, na.rm = TRUE)
+med_pub_rec
+creditDataProcessed[is.na(creditDataProcessed$pub_rec), "pub_rec"] <- med_pub_rec
+
+```
+## Attribute purpose
+
+Factorize the character
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$purpose <- as.numeric(creditDataProcessed$purpose)
+class(creditDataProcessed$purpose)
+
+```
+
+## Attribute collections_12_mths_ex_med
+
+Display a summary of the attribute **collections_12_mths_ex_med**:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$collections_12_mths_ex_med)
+```
+
+As shown, it's a numerical value with 122 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$collections_12_mths_ex_med)
+```
+**Conclusion**
+As expected the number of collections decreases and the majority of cases have not had a collection. The 122 NAs should be removed.
+
+Removing the 122 NAs:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$collections_12_mths_ex_med) != 1)
+```
+
+
+## Attribute delinq_2yrs
+
+Display a summary for the atrribute **delinq_2yrs**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$delinq_2yrs)
+```
+As shown, it's a numerical value with 25 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+
+```{r message = FALSE, warning = FALSE}
+table(creditData$delinq_2yrs)
+```
+**Conclusion**
+Only integers (whole numbers) are used. Most of the records (645151) did not have a 30+ days past-due incidences of delinquency in the borrower's credit file for the past 2 years. Densitiy decreases the higher the number of  incidences of delinquency.
+
+Removing the 25 NAs:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$delinq_2yrs) != 1)
+```
+
+
+## Attribute dti
+
+Display a summary for the atrribute **dti**
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$dti)
+```
+Probably some outliers in the data:
+
+```{r message = FALSE, warning = FALSE}
+plot(creditData$dti)
+```
+
+Let's display the top 100 values for dti:
+
+```{r message = FALSE, warning = FALSE}
+head((creditData %>% arrange(desc(creditData$dti)))$dti, 100)
+```
+
+**Conclusion**
+Should probably remove all the records with values equal to or above 100 for dti:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, creditDataProcessed$dti < 100)
+```
+
+## Attribute earliest_cr_line - David
+
+Let's see the structure of the attribute **earliest_cr_line**:
+
+```{r message = FALSE, warning = FALSE}
+str(creditData$earliest_cr_line)
+```
+Are there any NAs?
+
+```{r message = FALSE, warning = FALSE}
+sum(is.na(creditData$earliest_cr_line))
+```
+Reove the 25 NAs and convert the attribute into a factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$earliest_cr_line) != 1)
+#creditDataProcessed$earliest_cr_line <- as.numeric(creditDataProcessed$earliest_cr_line)
+str(creditDataProcessed$earliest_cr_line)
+```
+
+## Attribute emp_length - David
+
+Let's see the structure of the attribute **emp_length**:
+
+```{r message = FALSE, warning = FALSE}
+str(creditData$emp_length)
+```
+Are there any NAs?
+
+```{r message = FALSE, warning = FALSE}
+sum(is.na(creditData$emp_length))
+```
+
+Let's see a frequency table for the attribute:
+
+```{r message = FALSE, warning = FALSE}
+plot(table(creditDataProcessed$emp_length))
+```
+
+Convert the attribute into a factor:
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed$emp_length <- as.factor(creditDataProcessed$emp_length)
+str(creditDataProcessed$emp_length)
+```
+
+## Attribute funded_amnt - David
+
+Let's get a summary:
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$funded_amnt)
+```
+Let's plot a histogram:
+
+```{r message = FALSE, warning = FALSE}
+hist(creditData$funded_amnt)
+```
+
+
+
+## Attribute funded_amnt_inv - Ibrahim
+
+Display the summary of funded_amnt_inv
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$funded_amnt_inv)
+```
+Display the histogram of the feature to see distribution of values
+
+```{r message = FALSE, warning = FALSE}
+hist(creditData$funded_amnt_inv)
+```
+
+## Attribute home_ownership - Ibrahim
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$home_ownership)
+```
+```{r message = FALSE, warning = FALSE}
+plot(table(creditDataProcessed$home_ownership))
+```
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$home_ownership <- as.numeric(creditDataProcessed$home_ownership)
+str(creditDataProcessed$home_ownership)
+```
+
+
+
+## Attribute initial_list_status - Ibrahim
+
+Let's see how many different status we have
+
+```{r message = FALSE, warning = FALSE}
+unique(creditData$initial_list_status)
+```
+
+
+```{r message = FALSE, warning = FALSE}
+summary(creditData$initial_list_status)
+```
+
+
+```{r message = FALSE, warning = FALSE}
+#creditDataProcessed$initial_list_status <- as.numeric(creditDataProcessed$initial_list_status == "f")
+print(creditDataProcessed$initial_list_status)
+```
+
+Display all feature classes that we have chosen
+
+```{r message = FALSE, warning = FALSE}
+variable_classes <- sapply(creditDataProcessed, class)
+print(variable_classes)
+```
+
+```{r message = FALSE, warning = FALSE}
+library(corrplot)
+#creditDataProcessed$last_credit_pull_d <- #as.numeric(creditDataProcessed$last_credit_pull_d)
+#corrplot(cor(creditDataProcessed), method = "color",addCoef.col = 1,number.cex = 0.3, tl.cex = 0.3)
+```
+
+```{r message = FALSE, warning = FALSE}
+creditDataProcessed <- creditDataProcessed[!is.na(creditDataProcessed$revol_bal), ]
+```
+
+Gwen: Start with trees instead of regression variables. Because no numeric and categorical difference and than no check for collinearity. 
+Accuracy range: Gwen will check
+
+Gradient Boosting --> Serhat
+Random Forrest --> Ibrahim
+Decision Trees --> Mohamed
+
+14.12.23
+
+# Predicition
+```{r message = FALSE, warning = FALSE}
+
+## Visual exploration
+library(Hmisc)
+
+
+##############   3. Validation Set Approach ##########################
+
+set.seed(1)
+
+#Training and test data set
+train_indx <- sample(1:nrow(creditDataProcessed), 0.7*nrow(creditDataProcessed))
+creditDataProcessed.train <- creditDataProcessed[train_indx,]
+creditDataProcessed.test <- creditDataProcessed[-train_indx,]
+
+library(tree)
+
+#building the tree
+tree.InterestRate <- tree(int_rate ~ . , data = creditDataProcessed.train)
+
+#Summary of the tree
+summary(tree.InterestRate)
+
+#Visualization of the tree
+plot(tree.InterestRate)
+text(tree.InterestRate, cex=0.75)
+
+#Textual from of tree
+tree.InterestRate
+
+#Training error (RMSE)
+#4.15 compared to mean, which is 13.2449 kind of high
+(tree.InterestRate.train.RMSE <- sqrt(summary(tree.InterestRate)$dev/summary(tree.InterestRate)$df))
+```
+
+```{r message = FALSE, warning = FALSE}
+# Check if this is plausible by visually comparing the predicted Salaries to the true Salaries:
+InterestRatecreditDataPreprocessed.train <- creditDataProcessed.train$int_rate # True Salaries on training data
+tree.InterestRate.predict <- predict(tree.InterestRate, creditDataProcessed.train) # "Predicted" Salaries on on training data
+plot(InterestRatecreditDataPreprocessed.train, tree.InterestRate.predict)
+abline (0 ,1) 
+#   abline (0 ,1) draws the function f(x) = x (intercept 0, slope 1).
+#   For a perfect prediction, all points would lie in this line. 
+#   We see that the predicted values indeed deviate a lot from the true values. Thus, the high training MSE is plausible.
+#   The horizontal pattern stems from the 4 regions: each region provides a prediction for all included observations.
+
+```
+# Test error (RMSE)
+```{r message = FALSE, warning = FALSE}
+tree.InterestRate.predict <- predict(tree.InterestRate, creditDataProcessed.test) # To calculate it, we first need to predict the test data: As always, use the the generic function predict().
+(tree.InterestRate.test.dev <- sum((tree.InterestRate.predict - creditDataProcessed.test$int_rate)^2)) # Calculate the deviance (RSS) 
+(tree.InterestRate.test.RMSE <- sqrt(tree.InterestRate.test.dev/summary(tree.InterestRate)$df)) # Calculate the RMSE (divide by degrees of freedom and take the square root).
+#2.719 is less than the train error
+```
+
+# Use tree.control() to grow the tree deeper:
+```{r message = FALSE, warning = FALSE}
+tree.InterestRate.control = tree.control(nobs = dim(creditDataProcessed.train)[1], mincut=1, minsize = 3, mindev = 0)
+#     tree.control() produces control parameters for tree(). 
+#     nobs: The number of observations in the training set.
+#     mincut: The minimum number of observations to include in a child node. Default: 5.
+#     minsize: The smallest allowed node size. Default: 10.
+#     mindev: The within-node deviance (RSS) must be at least this times that of the root node for the node to be split. Default: 0.01.
+#     To produce a tree that fits the data perfectly (saturated tree), set mindev = 0 and minsize = 2 (provided the limit of 31 on tree depth allows such a tree).
+```
+
+```{r message = FALSE, warning = FALSE}
+#all predictors
+tree.all.control = tree.control(nobs = dim(creditDataProcessed.train)[1], mincut = 5, minsize = 10, mindev = 0.01)
+
+tree.all <- tree(int_rate ~ ., data = creditDataProcessed.train, control=tree.all.control)
+summary(tree.all)
+
+plot(tree.all)
+text(tree.all, cex=0.75)
+```
+
+```{r message = FALSE, warning = FALSE}
+# Training error (RMSE)
+(tree.all.train.RMSE <- sqrt(summary(tree.all)$dev/summary(tree.all)$df))
+
+# Test error (RMSE)
+tree.all.predict <- predict(tree.all, creditDataProcessed.test)
+tree.all.predict.dev <- sum((tree.all.predict - creditDataProcessed.test$int_rate)^2)
+(tree.all.test.RMSE <- sqrt(tree.all.predict.dev/summary(tree.all)$df)) 
+
+```
+
+# We could play with the tree.control() parameters a bit, or do cross-validation now.
+# Instead, we look at cost-complexity pruning. (We will need cross-validation there aslo, to find the best pruning parameter alpha)
+
+
+##############   5. Pruned Tree   ##########################
+# 
+# Cost-Complexity Pruning
+#   Goal: Prune the tree to avoid high variance and overfitting. 
+#   Expected positive effects: 
+#     - smaller test errors (due to less overfitting).
+#     - higher interpretability (due to smaller trees).
+#   Approach: 
+#     - Do cross-validation on the training+test set to find the best pruning parameter alpha.
+#     - Using the best alpha, grow a pruned tree on the training set.
+#     - Evaluate it on the validation set and compare the result with the validation set error from the tree obove.
+
+```{r message = FALSE, warning = FALSE}
+# We grow the full tree now
+tree.full.control <- tree.control(nobs = dim(creditDataProcessed.train)[1], mincut=1, minsize = 2, mindev = 0.01) #Bei Gwen steht hier 0
+# This set of parameters produce (almost) the full tree ("saturated tree", the tree that fits the data perfectly).
+#   Notice:
+#     In the tree above (in 4.2), we set the tree.control() parameters to mincut = 2, minsize = 10, mindev = 0.01.
+#     These parameters serve as a global threshold for growth, i.e, they stop the growth at a certain point, and the stop critera apply equally to all branches of the tree.
+#     In contrast, what we do now is cost complexity pruning: It takes the fully grown tree (no stop critera) and afterwards cuts back each branch.
+#     The cutting is *not* the same for all branches, but is done individually - in such a way as to minimize the overall RSS.
+tree.full <- tree(int_rate ~ ., creditDataProcessed.train, control = tree.full.control) 
+summary(tree.full)
+```
+```{r message = FALSE, warning = FALSE}
+# use cross-validation to find the optimal parameter \alpha for cost-complexity pruning  
+set.seed (1)
+cv.tree.full = cv.tree(tree.full)
+#   Runs a k-fold cross-validation experiment to determin deviance (RSS) 
+#   as a function of the cost-complexity parameter alpha.
+
+cv.tree.full
+#   $size: number of terminal nodes of each tree
+#     Notice that the size is decreasing (corresponding to the pruning sequence).
+#   $dev: cross-validation deviance (RSS)
+#   $k: cost-complexity parameter (alpha)
+#     Notice that alpha is increasing (corresponding to the pruning sequence).
+```
+```{r message = FALSE, warning = FALSE}
+# Plot the cross-validation deviance as a function of size and alpha
+par(mfrow=c(1,2)) # Environment variable to arrange multiple plots in one window: c(1,2)... 1 row, 2 columns 
+  plot(cv.tree.full$size, cv.tree.full$dev, type="b", xlab="number of terminal nodes", ylab="deviance") # type="b": plot both, points and lines
+  plot(cv.tree.full$k, cv.tree.full$dev, type="b", xlab="alpha", ylab="deviance")
+par(mfrow=c(1,1)) # Set back to default.
+
+
+# Find the tree with smallest CV error
+mindev.idx <- which(cv.tree.full$dev == min(cv.tree.full$dev)) 
+#   Index with minimal deviance
+(best.size <- min(cv.tree.full$size[mindev.idx]))
+#   The tree with 8 terminal nodes has lowest cross-validation error.
+
+# Now fit the pruned tree with alpha = 8
+tree.pruned <- prune.tree(tree.full, best = best.size)
+# prune.tree determines the nested cost-complexity sequence  
+# best=8: get the 8-node tree in the cost-complexity sequence 
+
+summary(tree.pruned)
+```
+```{r message = FALSE, warning = FALSE}
+# Plot the pruned regression tree 
+plot(tree.pruned) 
+text(tree.pruned, cex=0.75) # cex: set character size to 0.75
+
+# Training error (RMSE)
+(tree.pruned.train.RMSE <- sqrt(summary(tree.pruned)$dev/summary(tree.pruned)$df))
+#   214 (as compared to 202 in the from 4.2)
+
+# Test error (RMSE)
+tree.pruned.predict <- predict(tree.pruned, creditDataProcessed.test)
+tree.pruned.predict.dev <- sum((tree.pruned.predict - creditDataProcessed.test$int_rate)^2)
+(tree.pruned.test.RMSE <- sqrt(tree.pruned.predict.dev/summary(tree.pruned)$df))
+# 299 (as compared to 200 in the tree from 4.2)
+```
+
+##############   6. Bagging (Bootstrap Aggregation)  ##########################
+```{r message = FALSE, warning = FALSE}
+library(randomForest)
+#   Recall that bagging is just a special case of random forests with m = p.
+#   Thus, we can use the function randomForest() from the library randomForest for bagging also.
+
+# Apply bagging  
+set.seed(1)
+(tree.bag <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry=28, importance =TRUE, ntree=10))
+#   mtry = 28 means that we use all 28 predictors for each split of the tree - hence, do bagging.
+#   importance = TRUE says that variable importance should be assessed.
+#   ntree	... Number of trees to grow. This should not be set to too small a number, to ensure that every 
+#             input data point gets predicted at least a few times. 
+
+summary(tree.bag)
+  # Lists the attributes of bag.all
+
+# Training error (RMSE) based on predictions 
+tree.bag.predict.train <- predict(tree.bag, creditDataProcessed.train) 
+  # We predict the data points of the training set using the ensemble.
+  # Remember that these values are the *averaged* predictions of all trees in the ensemble. 
+  # Each of the predicted data points was part of the training set of some of the trees.  
+  # Thus, the error calculated from these predictions indeed corresponds to a classical "training error".
+(tree.bag.train.MSE <- mean((tree.bag.predict.train - creditDataProcessed.train$int_rate)^2))
+(tree.bag.train.RMSE <- sqrt(tree.bag.train.MSE))
+#   113 - The training error is relatively small. Likely the ensemble is overfitting.
+```
+# OOB error (RMSE)
+#   Recall that we actuaklly don't need to do cross validation for bagged trees to get a robust test error estimate.
+#   The OOB error is the qeuivalent of the cross validation error.
+
+```{r message = FALSE, warning = FALSE}
+tree.bag$predicted
+#   bag.all$predicted holds the averaged predicted values of the input data based on out-of-bag samples. 
+#   I.e., only those trees are participating in the prediction for which the data point in question was NOT part of the training set.
+#   Thus, the error calculated from these predictions corresponds to a "CV test error".
+(tree.bag.OOB.MSE <- mean((tree.bag$predicted - creditDataProcessed.train$int_rate)^2))
+(tree.bag.OOB.RMSE <- sqrt(tree.bag.OOB.MSE))
+#   286 - The OOB error is much higher, as expected.
+
+valid_predictions <- !is.na(tree.bag$predicted)
+
+
+# Test error (RMSE)
+tree.bag.predict.test <- predict(tree.bag, creditDataProcessed.test)
+(tree.bag.test.MSE <- mean((tree.bag.predict.test - creditDataProcessed.test$int_rate)^2))
+(tree.bag.test.RMSE <- sqrt(tree.bag.test.MSE))
+#   321 - The test error is even higher.
+```
+
+```{r message = FALSE, warning = FALSE}
+# Variable Importance 
+importance(tree.bag)
+# Two measures are reported:
+#   1. %IncMSE        ... reports how much the average MSE (estimated with out-of-bag-CV) increase
+#                         over all trees when we randomly shuffle the values of this variable.
+#                         The higher %IncMSE, the more important the variable.
+#                         %IncMSE is a robust measure.
+#   2. IncNodePurity  ... reports the total increase in node impurity that results from splits 
+#                         over this variable, averaged over all trees.
+#                         It is measured using the loss function by which best splits are chosen, i.e., the MSE in regression trees.
+#                         The higher IncNodePurity, the more important the variable.
+#                         IncNodePurity is biased, %IncMSE is preferred.
+sort(importance(tree.bag)[,1], decreasing = T)
+#   CHits has highest %IncMSE, followed by CAtBat. This is consistent with the decision trees we grew in sections 4 and 5.
+(varImpPlot(tree.bag))
+#   Plot variables importance measures
+
+# Optimizing the ntree parameter
+plot(tree.bag)
+# Shows the OOB error convergence with growing number of trees.
+# Remember that Bagging does not overfit, so we can increase ntree as we like.
+# If you increase ntree, e.g. to 1000, you will see in the plot that the OOB 
+#   error stabilizes after 500 trees, so we dont need more than that.
+
+# Optimizing the mtry parameter
+#   The default for mtry is quite sensible so there is not really a need to change it. 
+#   To see if randomForest is a better option than bagging, just compare the OOB errors of both.
+#   There is a function tuneRF() for optimizing the mtry parameter, yet it may cause bias. 
+```
+
+##############   7. Random Forests   ##########################
+
+# Growing a random forest proceeds in exactly the same way, 
+#     except that we use a smaller value of the mtry argument. 
+# By default, randomForest() uses 
+#     - p/3 variables when building a random forest of regression trees, and 
+#     - sqrt(p) variables when building a random forest of classification trees.
+
+# Building a random forest on the same data set using mtry = 19/3 = 6. 
+set.seed(1) 
+(tree.rf <- randomForest(Salary ~ ., Ht_nonas.train, mtry = 6, importance =TRUE, ntree=500))
+```{r message = FALSE, warning = FALSE}
+set.seed(1) 
+(tree.rf <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry = 28, importance =TRUE, ntree=10))
+```
+
+```{r message = FALSE, warning = FALSE}
+# Training error (RMSE)
+tree.rf.predict.train <- predict(tree.rf, creditDataProcessed.train)
+(tree.rf.train.MSE <- mean((tree.rf.predict.train - creditDataProcessed.train$int_rate)^2))
+(tree.rf.train.RMSE <- sqrt(tree.rf.train.MSE))
+#   116
+
+# OOB error (RMSE)
+(tree.rf.OOB.MSE <- mean((tree.rf$predicted - creditDataProcessed.train$int_rate)^2))
+(tree.rf.OOB.RMSE <- sqrt(tree.rf.OOB.MSE))
+#   286
+
+# Test error (RMSE)
+tree.rf.predict.test <- predict(tree.rf, creditDataProcessed.train)
+(tree.rf.test.MSE <- mean((tree.rf.predict.test - creditDataProcessed.train$int_rate)^2))
+(tree.rf.test.RMSE <- sqrt(tree.rf.test.MSE))
+#   314
+
+# Variable Importance 
+importance(tree.rf)
+sort(importance(tree.rf)[,1], decreasing = T)
+(varImpPlot(tree.rf))
+
+# Optimizing the ntree parameter
+plot(tree.rf)
+  # We see that the OOB error stabilizes after 500 trees 
+  # (you can put in ntree=1000 above and see this), so no need to use more than 500.
+```
+
+
+##############   Boosting   ##########################
+```{r message = FALSE, warning = FALSE}
+#   We use the gbm() function from the gbm library 
+library(gbm)
+# Perform boosting on the training data set, treating this as a regression problem. 
+set.seed (1)
+```
+
+#Preprocessing for Boosting
+```{r message = FALSE, warning = FALSE}
+creditDataProcessedFactorised <- creditDataProcessed
+
+# Angenommen, Ihre Daten befinden sich in einem DataFrame namens 'data' und die Variable heißt 'Combo'
+# 1. Ermitteln der Häufigkeiten
+freq_table <- table(creditDataProcessedFactorised$Combo)
+# 2. Filtern Sie Kategorien heraus, die nur einmal vorkommen
+rare_categories <- names(freq_table[freq_table == 1])
+# 3. Aktualisieren Sie die 'Combo'-Variable
+# Hier entfernen wir die seltenen Kategorien, indem wir sie durch NA ersetzen
+creditDataProcessedFactorised$Combo <- ifelse(creditDataProcessedFactorised$Combo %in% rare_categories, "Other", creditDataProcessedFactorised$Combo)
+# Optional: Konvertieren Sie 'Combo' wieder in einen Faktor, wenn nötig
+creditDataProcessedFactorised$Combo <- factor(creditDataProcessedFactorised$Combo)
+
+
+cols_to_factorise <- c("home_ownership", "verification_status", "purpose","title","zip_code","addr_state","earliest_cr_line","initial_list_status","last_credit_pull_d","application_type","Combo" )  # Ersetzen Sie diese mit den tatsächlichen Spaltennamen
+creditDataProcessedFactorised[cols_to_factorise] <- lapply(creditDataProcessedFactorised[cols_to_factorise], as.factor)
+
+train_indx2 <- sample(1:nrow(creditDataProcessedFactorised), 0.7*nrow(creditDataProcessedFactorised))
+creditDataProcessedFactorised.train <- creditDataProcessedFactorised[train_indx2,]
+creditDataProcessedFactorised.test <- creditDataProcessedFactorised[-train_indx2,]
+
+```
+
+
+```{r message = FALSE, warning = FALSE}
+(tree.boost <- gbm(int_rate ~ ., creditDataProcessedFactorised.train, distribution="gaussian", n.trees=100, interaction.depth = 1, shrinkage = 0.001, verbose = F))
+# distribution = "gaussian" ... refers to a regression problem. 
+# n.trees	                  ... Integer specifying the total number of trees to fit (number of iterations). Default is 100.
+# interaction.depth         ... refers to the maximum depth of variable interactions. 
+#                               A value of 1 implies an additive model, a value of 2 implies a model with up to 
+#                               2-way interactions, etc. Default is 1.
+# shrinkag                  ... a shrinkage parameter, also known as the learning rate or step-size reduction; 
+#                               0.001 to 0.1 usually work, but a smaller learning rate typically requires more trees. Default is 0.1.
+
+# Training error (RMSE)
+tree.boost.predict.train <- predict(tree.boost, creditDataProcessedFactorised.train)
+(tree.boost.train.MSE <- mean((tree.boost.predict.train - creditDataProcessedFactorised.train$int_rate)^2))
+(tree.boost.train.RMSE <- sqrt(tree.boost.train.MSE))
+#   0.002
+#   Our boosted ensemble seems to overfit! - Lets check the test error.
+
+# Test error (RMSE)
+tree.boost.predict.test <- predict(tree.boost, creditDataProcessedFactorised.test)
+(tree.boost.test.MSE <- mean((tree.boost.predict.test - creditDataProcessedFactorised.test$int_rate)^2))
+(tree.boost.test.RMSE <- sqrt(tree.boost.test.MSE))
+#   373 
+#   Definitely overfitting...
+
+# Variable importance
+summary(tree.boost)
+# outputs the variable importance as a table and a plot
+#   rel.inf ... relative variable importance ("permutation importance"), same as %IncMSE used for random forests.
+#             It measures the importance of a predictor by the average increase in prediction error when the values  
+#             of a given predictor are shuffled (permuted). The values are normalized so that they add up to 100%.
+#   If you dont see a variable in your plot, expand the plot window.
+# We have different variables on top here...
+
+
+
+##############   Evaluation Sum-Up  ##############   
+
+# Now compare the different errors:
+Tree          <- c(tree.all.train.RMSE, tree.all.test.RMSE)
+prunedTree    <- c(tree.pruned.train.RMSE, tree.pruned.test.RMSE)
+baggedTrees   <- c(tree.bag.train.RMSE, tree.bag.OOB.RMSE)
+randomForest  <- c(tree.rf.train.RMSE, tree.rf.OOB.RMSE)
+boostedTrees  <- c(tree.boost.train.RMSE, tree.boost.test.RMSE)
+
+error_matrix <- data.frame(Tree, prunedTree, baggedTrees, randomForest, boostedTrees)
+row.names(error_matrix) <- c("train", "test/OOB")
+error_matrix
+```

@@ -919,7 +919,7 @@ library(randomForest)
 
 # Apply bagging  
 set.seed(1)
-(tree.bag <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry=28, importance =FALSE, ntree=10))
+(tree.bag <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry=28, importance =TRUE, ntree=10))
 #   mtry = 28 means that we use all 28 predictors for each split of the tree - hence, do bagging.
 #   importance = TRUE says that variable importance should be assessed.
 #   ntree	... Number of trees to grow. This should not be set to too small a number, to ensure that every 
@@ -943,17 +943,19 @@ tree.bag.predict.train <- predict(tree.bag, creditDataProcessed.train)
 #   The OOB error is the qeuivalent of the cross validation error.
 
 ```{r message = FALSE, warning = FALSE}
+valid_prediction <- !is.na(tree.bag$predicted)
 tree.bag$predicted
 #   bag.all$predicted holds the averaged predicted values of the input data based on out-of-bag samples. 
 #   I.e., only those trees are participating in the prediction for which the data point in question was NOT part of the training set.
 #   Thus, the error calculated from these predictions corresponds to a "CV test error".
-(tree.bag.OOB.MSE <- mean((tree.bag$predicted - creditDataProcessed.train$int_rate)^2))
+(tree.bag.OOB.MSE <- mean((tree.bag$predicted[valid_predictions] - creditDataProcessed.train$int_rate[valid_predictions])^2, na.rm = TRUE))
 (tree.bag.OOB.RMSE <- sqrt(tree.bag.OOB.MSE))
 #   286 - The OOB error is much higher, as expected.
 
 # Test error (RMSE)
 tree.bag.predict.test <- predict(tree.bag, creditDataProcessed.test)
 (tree.bag.test.MSE <- mean((tree.bag.predict.test - creditDataProcessed.test$int_rate)^2))
+mean(tree.bag.predict.test)
 (tree.bag.test.RMSE <- sqrt(tree.bag.test.MSE))
 #   321 - The test error is even higher.
 ```
@@ -1003,6 +1005,7 @@ set.seed(1)
 ```{r message = FALSE, warning = FALSE}
 set.seed(1) 
 (tree.rf <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry = 28, importance =TRUE, ntree=10))
+valid_OOB_predictions <- !is.na(tree.rf$predicted)
 ```
 
 ```{r message = FALSE, warning = FALSE}
@@ -1013,7 +1016,7 @@ tree.rf.predict.train <- predict(tree.rf, creditDataProcessed.train)
 #   116
 
 # OOB error (RMSE)
-(tree.rf.OOB.MSE <- mean((tree.rf$predicted - creditDataProcessed.train$int_rate)^2))
+(tree.rf.OOB.MSE <- mean((tree.rf$predicted[valid_OOB_predictions] - creditDataProcessed.train$int_rate[valid_OOB_predictions])^2, na.rm = TRUE))
 (tree.rf.OOB.RMSE <- sqrt(tree.rf.OOB.MSE))
 #   286
 
