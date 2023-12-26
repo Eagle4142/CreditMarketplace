@@ -796,7 +796,7 @@ abline (0 ,1)
 tree.InterestRate.predict <- predict(tree.InterestRate, creditDataProcessed.test) # To calculate it, we first need to predict the test data: As always, use the the generic function predict().
 (tree.InterestRate.test.dev <- sum((tree.InterestRate.predict - creditDataProcessed.test$int_rate)^2)) # Calculate the deviance (RSS) 
 (tree.InterestRate.test.RMSE <- sqrt(tree.InterestRate.test.dev/summary(tree.InterestRate)$df)) # Calculate the RMSE (divide by degrees of freedom and take the square root).
-#2.719 is less than the train error
+#2.717 is less than the train error
 ```
 
 # Use tree.control() to grow the tree deeper:
@@ -991,7 +991,7 @@ plot(tree.bag)
 #   There is a function tuneRF() for optimizing the mtry parameter, yet it may cause bias. 
 ```
 
-##############   7. Random Forests   ##########################
+##############   7. Random Forrests   ##########################
 
 # Growing a random forest proceeds in exactly the same way, 
 #     except that we use a smaller value of the mtry argument. 
