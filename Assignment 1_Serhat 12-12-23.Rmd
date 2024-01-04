@@ -3,9 +3,10 @@ title: "Assignment 1"
 author: "David Krütli, Serhat Nergiz, Ibrahim Yaman, Mohamed Ramadan<br>"
 date: "`r Sys.time()`"
 output:
-  github_document:
+  pdf_document:
     toc: yes
-    toc_depth: 3
+    number_sections: true
+    highlight: tango
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +15,85 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Business Understanding
 
-Text **to follow** here.
+Business Understanding
+
+Introduction
+
+The Fintech sector is constantly evolving due to the rapid enhancement within the level of technology and newly emerged business models. The project that we are working on involves a company that operates in that sphere and the need to adapt to the constant evolution of that sector is essential for their sustainability. (Giglio, 2021)
+
+The company is called LendingClub and it’s a company that provides a service in a peer-to-peer form “P2P”. The company has a lending platform that allows people who need to borrow money with people who want to invest their money. The LendingClub allows that form of exposure between the two parties to be initiated in a convenient way that does give big advantages over the traditional ways of borrowing or lending money. The technology allows LendingClub to offer the service online which in return minimizes their running costs and in return, the clients get better interest rates with the liberty of applying for loans through the comfort of their home by making an application. (Frankel, 2021)
+
+The goal of the company is to keep its business model active so that it can have a sustainable business; thus being a middle company between the two parties is how they generate profit. The company needs to have enough applications and contracts to help its borrowers get the money they need and their lenders to profit from their investments. This requires creating a piece of detailed information about the borrower's capabilities to acquire the loan and it is more flexible than traditional ways as it doesn’t require a long time if all the information from the borrower is handled accurately through some elements such as their credit score, credit history, etc. (Giglio, 2021)
+
+As well as the LendingClub offers another service in which they have a secondary market for investors to sell their commitment to a certain loan to another interested investor. LendingClub calls it “Notes”, the notes are a portion of the loan that is divided into many notes, and then investors come and invest in all the loan notes or just a portion of it; which allows investors to have the ability to diversify their portfolio based on their investment needs.(Chang et al., 2022)
+
+Finally, LendingClub has decided that to keep up with the Fintech industry they have to upgrade their business model from peer to peer lending platform to a business model of online banking to allow themselves to be more sustainable in terms of their growth in the market. The company offers a competitive interest rates, digital platform with diverse interest parties whether borrowers or investors, transparent fees, and flexible loan agreements. However this shouldn’t affect any existing notes that LendingClub clients own, nor it shouldn’t affect the institutional investors who are doing business with the company.(Chang et al., 2022)
+
+Methodology
+
+LendingClub is a peer-to-peer lending platform that connects borrowers with individual investors. Here's how it generally works:(Chang et al., 2022)
+
+As mentioned previously, the platform connects the two interested parties in a specific setting. First, the borrower applies for loans through the LendingClub platform and as a company gets a notification and process starts to evaluate the creditworthiness of the applicants using algorithms based on the data that they provide whilst assigning the applicants to a credit grade.
+
+Second Now that acts as an asset and gets promoted on the platform waiting for the prospective investors who are looking to earn profits to evaluate the details of the approved loans and their purpose and make a decision to invest.
+
+Third the investor can invest as little as $25 in each loan which gives them more flexible options for portfolio diversification, and borrowers will receive their loan while agreeing to repay their loan over a fixed period which is usually between 3 to 5 years.
+
+From that stage, the borrowers are obliged to make monthly payments including the interest and original over their loan agreement. The inventors on the other hand receive a portion of these payments subject to their investment within that specific loan. As a rule of thumb, the company decides the interest rates which are based on the credit risk of the borrower, while investors will have the opportunity to have a higher return compared to other investment options thus creating a risk that also borrowers may default over their loans. Also to provide some sort of security for investors they offered them to sell their obligations for a specific type of loan to other investors who might be interested as a form of an exit strategy through a secondhand market of “Notes”. (LendingClub, 2023)
+
+The company evaluates the potential borrowers based on a set of criteria to assess their creditworthiness and evaluate the terms of the loan. While the specific criteria may vary, the following are common factors to consider when choosing customers: Credit Score, Credit History, Debt-to-Income Ratio, Employment and Income, Loan Purpose, Length of Employment, Verification of Information, and Public Records that could show any sort of bankruptcies, tax issues, or other negative items in public records may impact the borrower's eligibility and loan agreements.(Chang et al., 2022)
+
+The interest rate on a personal loan can vary based on several factors, including the borrower's creditworthiness, the lender's policies, loan amount, loan term, and prevailing market conditions. A good personal loan interest rate often falls within the range of 6% to 36%. (Pál, 2023)
+
+1. Excellent Credit (720 and above):
+· Borrowers with excellent credit often qualify for the lowest interest rates, typically in the single digits or low teens.
+
+2. Good Credit (660 - 719):
+· Those with good credit may still receive favorable rates, ranging from the mid to high single digits up to the low twenties.
+
+3. Fair Credit (620 - 659):
+· Individuals with fair credit might face higher interest rates, often in the high teens to mid-twenties.
+
+4. Poor Credit (below 620):
+· Borrowers with poor credit may have limited options and could face interest rates toward the upper end of the scale, potentially exceeding 30%.
+
+The company also uses the Debt-to-Income (DTI) ratio to assess an individual's or a household's ability to manage debt in relation to their income. It is expressed as a percentage and is calculated by dividing total monthly debt payments by gross monthly income. The DTI ratio provides investors and financial institutions with insights into a borrower's financial health and their capacity to take on additional debt. (Team, 2021)
+
+1. Calculation:
+
+DTI Ratio = (Total Monthly Debt Payments / Gross Monthly Income) x 100
+
+Total Monthly Debt Payments: This includes all recurring monthly debt obligations such as mortgage or rent payments, car loans, credit card payments, student loans, and any other debt obligations.
+
+Gross Monthly Income: This is the total income before deducting taxes and other withholdings.
+
+The resulting DTI ratio is expressed as a percentage. For example, a DTI ratio of 20% means that 20% of gross monthly income is allocated to debt payments. There are two types of DTI, Front-End DTI which considers only housing-related expenses (mortgage or rent, property taxes, and homeowner's insurance). And Back-End DTI which considers all debt obligations, including housing-related expenses and other debts like credit cards and loans.
+
+Lenders often have guidelines for acceptable DTI ratios. Lower DTI ratios are considered more favorable, which indicates that a smaller percentage of income is
+
+allocated to debt. As well as a lower DTI ratio may enhance a borrower's ability to qualify for loans and secure more favorable interest rates. While a higher DTI ratio may signal higher financial risk to lenders, potentially impacting the approval for new credit. (Srivastav, 2021)
+
+The company also uses a revolving credit which is a credit arrangement without a predetermined number of payments, allowing the borrower to utilize the available credit up to a set limit repeatedly. In contrast to installment credit, where a fixed sum is borrowed and repaid in consistent installments, revolving credit enables borrowers to access the credit line, make payments, and subsequently utilize the credit again. Ex. Credit cards are a common form of revolving credit. Cardholders can make purchases up to their credit limit, repay the balance, and then reuse the available credit. Revolving credit provides flexibility and convenience but requires responsible management to avoid accumulating high levels of debt. (Axelton, 2023)
+
+The Key difference between revolving and installment credit is that both types of credit have their advantages and considerations. Installment credit is suitable for specific, one-time expenses while revolving credit offers ongoing access to funds for various purposes. Individuals often use a combination of both types of credit based on their financial needs and goals. (Axelton, 2023)
+
+The company also uses the APR “Annual Percentage Rate” which is a number that expresses the total cost accumulated from lending money. It acts as an interest rate that is applied once the borrower doesn’t fulfill his balance obligation to the lender which is an interest rate that excludes all the other costs of the credit card. Another form of APR is on installment loans which takes into account the APR, fees, and any other form of costs. Both have different forms of calculation thus it varies from credit card to installment loan. (Luthi, 2023)
+
+All the elements of information provided previously affect the process of lending money so if a company has to build algorithms that approve a loan and generate a profit over it; it should be managed carefully and constantly to allow the process to flow smoothly with no losses either for the borrower or lenders.
+
+We will aim to study the data of LendingClub and implement several algorithms models to help us achieve a good understanding of Lending club business model and to check possible ways to achieve better results after investigating their current data. We will try to construct that by using several machine learning and artificial neural network (ANN) methods including linear regression, decision trees, and random forests. We also aim as part of our 2nd part of the Assignment to create a neural network for exploring several hyper parameter settings for each method by performing a grid search and cross-validation to get the most suitable credit-scoring model in terms of training time and test performance.
+
+Bibliography
+
+1. Axelton, K. (2023, Jan 06). What Is Revolving Credit? Retrieved from experian: https://www.experian.com/blogs/ask-experian/what-is-revolving-credit/
+2. Frankel, M. (2021, July 21). The Ascent. Retrieved from Fool: https://www.fool.com/the-ascent/personal-loans/articles/lendingclub-ending-its-p2p-lending-platform-now-what/
+3. Giglio, F. (2021). Fintech: A Literature Review. European Research Studies Journal, 600-627.
+4. LendingClub. (2023). Does LendingClub Still Issue New Notes? Retrieved from LendingClub: https://lendingclub.zendesk.com/hc/en-us/articles/360050574891-Does-LendingClub-Still-Issue-New-Notes-
+5. Luthi, B. (2023, November 14). What Is an Installment Loan? Retrieved from experian: https://www.experian.com/blogs/ask-experian/what-is-installment-loan/
+6. Pál, T. (2023, June 05). Interest Rate Calculator. Retrieved from Omni Calculator: https://www.omnicalculator.com/finance/interest-rate
+7. Srivastav, A. K. (2021). Debt to Income Ratio (DTI). Retrieved from wallstreetmojo: https://www.wallstreetmojo.com/debt-to-income-ratio/
+8. Team, C. (2021). Debt-to-Income Ratio. Retrieved from corporatefinanceinstitute: https://corporatefinanceinstitute.com/resources/commercial-lending/debt-to-income-ratio/
+9. Chang, A.-H., Yang, L.-K., Tsaih, R.-H., & Lin, S.-K. (2022). Machine learning and artificial neural networks to construct P2P lending credit-scoring model: A case using Lending Club data. Quantitative Finance and Economics, 6(2), 303–325. https://doi.org/10.3934/QFE.2022013
 
 # Setup
 ## Load Required Packages
@@ -24,7 +103,6 @@ First of all we are going to load the packages required for this project.
 ```{r message = FALSE, warning = FALSE}
 #install.packages("readr")
 #install.packages("tidyverse")
-#install.packages("formattable")
 #install.packages("car")
 #install.packages("corrplot")
 #install.packages("dbplyr")
@@ -95,10 +173,10 @@ Next we are removing all variables with more than 200'000 blank values.
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
                                                        desc,
-                                                       dti_joint, #Watch out out for this
-                                                       mths_since_last_delinq, #Watch out out for this
-                                                       mths_since_last_major_derog, #Watch out out for this
-                                                       mths_since_last_record, #Watch out out for this
+                                                       dti_joint, 
+                                                       mths_since_last_delinq, 
+                                                       mths_since_last_major_derog, 
+                                                       mths_since_last_record,
                                                        open_acc_6m,
                                                        open_il_6m,
                                                        open_il_12m,
@@ -118,8 +196,6 @@ creditDataProcessed <- subset(creditDataProcessed,select=-c(annual_inc_joint,
                                                        member_id,
                                                        emp_title))
 ```
-Gwen: If there are 0's in the column, than the NA's could be important values. If NA's are important than replace it with something. dti_joint is also a difficult one. (NA example expiry date). verification_status_joint to watch too. Drop out in dti values above 100 (for example).   
-
 
 We will also drop the variable url because with 798641 levels it is not going to say anything about our data. The policy code is also not really useful to predict the interest rate, because it only has the numeric value 1. Furthermore, the variable verified_status_joint will be dropped since there are only NA's in there.
 
@@ -191,6 +267,13 @@ Let's see which of them are occuring the most.
 max(table(creditData$title))
 FrequencyTitle <- round(prop.table(table(creditData$title))*100,2)
 table <- cbind(FrequencyTitle)
+sorted_table <- table[order(table, decreasing = TRUE), ]
+
+# Now, get the top 20 rows
+top_20_rows <- head(sorted_table, 20)
+
+# Display the top 20 rows
+print(top_20_rows)
 ```
 
 In the table we can see that debt consolidation and credit card refinancing are dominating the categories with over 67%. So we are taking the top 5 categories for the predicition. The rest will be sum up as "others"
@@ -209,13 +292,6 @@ Now we can see which categories are left:
 table(creditDataProcessed$title)
 ```
 
-Finally, we can factorise this variable
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$title <- as.numeric(creditDataProcessed$title)
-```
-
-Gwen: Model it first and then think about make some more improvements. Rule: Predictors and observations shouldn't be the same.
-
 ## Attribute zip_code
 
 Let us first have a look at the variable:
@@ -227,6 +303,7 @@ Let's have a more in depth view on the data:
 
 ```{r message = FALSE, warning = FALSE}
 tab <- table(creditData$zip_code, creditData$addr_state)
+print(tab)
 ```
 
 As we can see with the table function, some of the zip_code are occuring in multiple states. Therefore, it makes sense to combine the zip_code and addr_state variable to create truely unique values. This way it could give us a better prediction for the interest rate.
@@ -234,24 +311,6 @@ As we can see with the table function, some of the zip_code are occuring in mult
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed$zip_code <- substr(creditDataProcessed$zip_code, 1, 3)
 creditDataProcessed$Combo <- paste0(creditDataProcessed$zip_code, creditDataProcessed$addr_state)
-#creditDataProcessed <- subset(creditDataProcessed,select=-c(zip_code,addr_state))
-```
-
-Finally, we can factorise this variable
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$Combo <- as.numeric(creditDataProcessed$Combo)
-```
-
-Neuer Versuch:
-Next we want to take the coordinates of all zip codes and states. The data we want to integrate is from "https://simplemaps.com/data/us-zips". There the zip codes and states were combined the same way as above and with a lookup the coordinates where integrated into the creditDataProcessed data. 
-
-```{r message = FALSE, warning = FALSE}
-#excel_data <- read_excel("uszips.xlsx")
-```
-
-```{r message = FALSE, warning = FALSE}
-#excel_data <- select(excel_data,"LAT Average","LON Average","Combo")
-#creditDataProcessed <- merge(creditDataProcessed, excel_data, by="Combo", all.x=TRUE)
 ```
 
 
@@ -270,9 +329,9 @@ print(Higher0)
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData$acc_now_delinq, creditData$acc_now_delinq,
+plot(creditData$acc_now_delinq, creditData$int_rate,
      xlab = "acc_now_delinq", 
-     ylab = "acc_now_delinq",
+     ylab = "int_rate",
      main = "Scatter plot of acc_now_delinq",
      pch = 20,
      col = "blue")
@@ -305,9 +364,9 @@ creditDataProcessed$tot_coll_amt[is.na(creditDataProcessed$tot_coll_amt)] <- med
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData$tot_coll_amt, creditData$tot_coll_amt,
+plot(creditData$tot_coll_amt, creditData$int_rate,
      xlab = "tot_coll_amt", 
-     ylab = "tot_coll_amt",
+     ylab = "int_rate",
      main = "Scatter plot of tot_coll_amt",
      pch = 20,
      col = "blue")
@@ -331,7 +390,7 @@ zero_in_column <- sum(creditData$tot_cur_bal == 0, na.rm = TRUE)
 print(zero_in_column)
 ```
 
-Only 102 cells with the value 0. It makes absolutely sense to replace this time the NA's with the mean, which would be 139508. The distribution between the value seems also alright.
+Only 114 cells with the value 0. It makes absolutely sense to replace this time the NA's with the mean, which would be 139508. The distribution between the value seems also alright.
 
 ```{r message = FALSE, warning = FALSE}
 mean_tot_cur_bal <- mean(creditDataProcessed$tot_cur_bal, na.rm = TRUE)
@@ -341,9 +400,9 @@ creditDataProcessed$tot_cur_bal[is.na(creditDataProcessed$tot_cur_bal)] <- mean_
 
 We should also check if there are any outliers:
 ```{r message = FALSE, warning = FALSE}
-plot(creditData$tot_cur_bal, creditData$tot_cur_bal,
+plot(creditData$tot_cur_bal, creditData$int_rate,
      xlab = "tot_cur_bal", 
-     ylab = "tot_cur_bal",
+     ylab = "int_rate",
      main = "Scatter plot of tot_cur_bal",
      pch = 20,
      col = "blue")
@@ -377,14 +436,6 @@ table(creditData$addr_state)
 **Conclusion**:
 
 We should keep this attribute in the dataset for the moment. The interest rate could depend on the area where the borrower lives. This attribute needs to be converted into a categorical value (factor).
-
-Convert the character attribute into a categorical value (factor):
-
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$addr_state <- as.numeric(creditDataProcessed$addr_state)
-#str(creditDataProcessed$addr_state)
-```
-
 
 ## Attribute annual_inc
 
@@ -444,14 +495,7 @@ table(creditData$application_type)
 
 **Conclusion**:
 
-The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT. This attribute could be transformed in a binary value or factorized.
-
-Converting attribute into factor:
-
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$application_type <- as.numeric(creditDataProcessed$application_type)
-str(creditDataProcessed$application_type)
-```
+The vast majority of applications are INDIVIDUAL (798181). Only 460 are JOINT.
 
 
 ## Attribute verification_status
@@ -461,12 +505,6 @@ Display a summary of the attribute **verification_status**:
 ```{r message = FALSE, warning = FALSE}
 count(creditData[is.na(creditData$verification_status), ])
 class(creditData$verification_status)
-```
-Factorize the character value
-
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$verification_status <- as.numeric(factor(creditDataProcessed$verification_status))
-class(creditDataProcessed$verification_status)
 ```
 
 ## Attribute open_acc
@@ -493,9 +531,9 @@ creditDataProcessed[is.na(creditDataProcessed$open_acc), "open_acc"] <- med_open
 
 ## Attribute last_credit_pull_d
 
+Display the unique values of last_credit_pull_d
 ```{r message = FALSE, warning = FALSE}
 unique(creditData$last_credit_pull_d)
-
 ```
 Display the class
 
@@ -503,20 +541,12 @@ Display the class
 
 class(creditData$last_credit_pull_d)
 ```
-Factorize the attribute last_credit_pull_d
-
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$last_credit_pull_d <- as.factor(creditDataProcessed$last_credit_pull_d) #as.factor = make it categorical
-class(creditDataProcessed$last_credit_pull_d)
-```
-Gwen: Create for every categorical value a boxsplot to see a shift. Or use scatter plot.
 
 Remove the blanks
 
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- creditDataProcessed[!is.na(creditDataProcessed$last_credit_pull_d), ]
 creditDataProcessed
-
 ```
 
 ## Attribute pub_rec
@@ -546,15 +576,15 @@ Display a summary of the attribute **collections_12_mths_ex_med**:
 summary(creditData$collections_12_mths_ex_med)
 ```
 
-As shown, it's a numerical value with 122 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
+As shown, it's a numerical value with 126 NAs and we assume that the number of collections is recorded as integer so we want to display a frequency table:
 
 ```{r message = FALSE, warning = FALSE}
 table(creditData$collections_12_mths_ex_med)
 ```
 **Conclusion**
-As expected the number of collections decreases and the majority of cases have not had a collection. The 122 NAs should be removed.
+As expected the number of collections decreases and the majority of cases have not had a collection. The 126 NAs should be removed.
 
-Removing the 122 NAs:
+Removing the 126 NAs:
 
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$collections_12_mths_ex_med) != 1)
@@ -609,7 +639,7 @@ Should probably remove all the records with values equal to or above 100 for dti
 creditDataProcessed <- subset(creditDataProcessed, creditDataProcessed$dti < 100)
 ```
 
-## Attribute earliest_cr_line - David
+## Attribute earliest_cr_line
 
 Let's see the structure of the attribute **earliest_cr_line**:
 
@@ -621,15 +651,15 @@ Are there any NAs?
 ```{r message = FALSE, warning = FALSE}
 sum(is.na(creditData$earliest_cr_line))
 ```
-Reove the 25 NAs and convert the attribute into a factor:
+Reove the 25 NAs:
 
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- subset(creditDataProcessed, is.na(creditDataProcessed$earliest_cr_line) != 1)
-#creditDataProcessed$earliest_cr_line <- as.numeric(creditDataProcessed$earliest_cr_line)
+
 str(creditDataProcessed$earliest_cr_line)
 ```
 
-## Attribute emp_length - David
+## Attribute emp_length
 
 Let's see the structure of the attribute **emp_length**:
 
@@ -655,7 +685,7 @@ creditDataProcessed$emp_length <- as.factor(creditDataProcessed$emp_length)
 str(creditDataProcessed$emp_length)
 ```
 
-## Attribute funded_amnt - David
+## Attribute funded_amnt
 
 Let's get a summary:
 
@@ -670,7 +700,7 @@ hist(creditData$funded_amnt)
 
 
 
-## Attribute funded_amnt_inv - Ibrahim
+## Attribute funded_amnt_inv
 
 Display the summary of funded_amnt_inv
 
@@ -683,22 +713,21 @@ Display the histogram of the feature to see distribution of values
 hist(creditData$funded_amnt_inv)
 ```
 
-## Attribute home_ownership - Ibrahim
+## Attribute home_ownership
 
 ```{r message = FALSE, warning = FALSE}
 summary(creditData$home_ownership)
-```
-```{r message = FALSE, warning = FALSE}
+
+
 plot(table(creditDataProcessed$home_ownership))
-```
-```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$home_ownership <- as.numeric(creditDataProcessed$home_ownership)
+
+
 str(creditDataProcessed$home_ownership)
 ```
 
 
 
-## Attribute initial_list_status - Ibrahim
+## Attribute initial_list_status
 
 Let's see how many different status we have
 
@@ -713,7 +742,6 @@ summary(creditData$initial_list_status)
 
 
 ```{r message = FALSE, warning = FALSE}
-#creditDataProcessed$initial_list_status <- as.numeric(creditDataProcessed$initial_list_status == "f")
 print(creditDataProcessed$initial_list_status)
 ```
 
@@ -725,30 +753,12 @@ print(variable_classes)
 ```
 
 ```{r message = FALSE, warning = FALSE}
-library(corrplot)
-#creditDataProcessed$last_credit_pull_d <- #as.numeric(creditDataProcessed$last_credit_pull_d)
-#corrplot(cor(creditDataProcessed), method = "color",addCoef.col = 1,number.cex = 0.3, tl.cex = 0.3)
-```
-
-```{r message = FALSE, warning = FALSE}
 creditDataProcessed <- creditDataProcessed[!is.na(creditDataProcessed$revol_bal), ]
 ```
 
-Gwen: Start with trees instead of regression variables. Because no numeric and categorical difference and than no check for collinearity. 
-Accuracy range: Gwen will check
-
-Gradient Boosting --> Serhat
-Random Forrest --> Ibrahim
-Decision Trees --> Mohamed
-
-14.12.23
 
 # Predicition
 ```{r message = FALSE, warning = FALSE}
-
-## Visual exploration
-library(Hmisc)
-
 
 ##############   3. Validation Set Approach ##########################
 
@@ -758,8 +768,6 @@ set.seed(1)
 train_indx <- sample(1:nrow(creditDataProcessed), 0.7*nrow(creditDataProcessed))
 creditDataProcessed.train <- creditDataProcessed[train_indx,]
 creditDataProcessed.test <- creditDataProcessed[-train_indx,]
-
-library(tree)
 
 #building the tree
 tree.InterestRate <- tree(int_rate ~ . , data = creditDataProcessed.train)
@@ -787,9 +795,7 @@ plot(InterestRatecreditDataPreprocessed.train, tree.InterestRate.predict)
 abline (0 ,1) 
 #   abline (0 ,1) draws the function f(x) = x (intercept 0, slope 1).
 #   For a perfect prediction, all points would lie in this line. 
-#   We see that the predicted values indeed deviate a lot from the true values. Thus, the high training MSE is plausible.
-#   The horizontal pattern stems from the 4 regions: each region provides a prediction for all included observations.
-
+#   We can see that the predicted values indeed deviate a lot from the true values. Thus, the high training MSE is plausible.
 ```
 # Test error (RMSE)
 ```{r message = FALSE, warning = FALSE}
@@ -807,7 +813,6 @@ tree.InterestRate.control = tree.control(nobs = dim(creditDataProcessed.train)[1
 #     mincut: The minimum number of observations to include in a child node. Default: 5.
 #     minsize: The smallest allowed node size. Default: 10.
 #     mindev: The within-node deviance (RSS) must be at least this times that of the root node for the node to be split. Default: 0.01.
-#     To produce a tree that fits the data perfectly (saturated tree), set mindev = 0 and minsize = 2 (provided the limit of 31 on tree depth allows such a tree).
 ```
 
 ```{r message = FALSE, warning = FALSE}
@@ -820,6 +825,16 @@ summary(tree.all)
 plot(tree.all)
 text(tree.all, cex=0.75)
 ```
+Evaluation:
+The decision tree visualized is modeling the interest rate (int_rate) as the target variable. The tree is making predictions based on two features: revol_util and inq_last_6mths. Here's the interpretation of the tree in the context of predicting interest rates:
+-Root Node (revol_util < 51.85): The entire data set is first split based on the revolving utilization rate. If the utilization rate is less than 51.85%, the left branch is followed; otherwise, the right branch is taken. The utilization rate generally represents the amount of credit used relative to the total available credit, and it's a strong indicator in credit scoring because it reflects credit management behavior.
+-Left Branch (inq_last_6mths < 0.5): For individuals with a revol_util less than 51.85%:
+  --If they have had fewer than 0.5 credit inquiries in the last 6 months (which typically means 0 inquiries), the predicted interest rate is 11.13%.
+  --If they have had 0.5 or more inquiries (typically at least 1 inquiry), the predicted interest rate is higher at 13.24%.
+-Right Branch (inq_last_6mths < 0.5): For individuals with a revol_util of 51.85% or higher:
+  --If they have had fewer than 0.5 inquiries in the last 6 months, the predicted interest rate is 13.35%, slightly higher than the corresponding group with lower revol_util.
+  --If they have had 0.5 or more inquiries, the predicted interest rate jumps to 15.24%, which is the highest among all the groups.
+These predictions imply a relationship where higher credit utilization (revol_util) and a greater number of recent credit inquiries (inq_last_6mths) are associated with higher interest rates (int_rate). This makes intuitive sense, as both high utilization and frequent inquiries can be indicators of higher credit risk, which lenders might compensate for with higher interest rates.
 
 ```{r message = FALSE, warning = FALSE}
 # Training error (RMSE)
@@ -837,7 +852,6 @@ tree.all.predict.dev <- sum((tree.all.predict - creditDataProcessed.test$int_rat
 
 
 ##############   5. Pruned Tree   ##########################
-# 
 # Cost-Complexity Pruning
 #   Goal: Prune the tree to avoid high variance and overfitting. 
 #   Expected positive effects: 
@@ -850,10 +864,10 @@ tree.all.predict.dev <- sum((tree.all.predict - creditDataProcessed.test$int_rat
 
 ```{r message = FALSE, warning = FALSE}
 # We grow the full tree now
-tree.full.control <- tree.control(nobs = dim(creditDataProcessed.train)[1], mincut=1, minsize = 2, mindev = 0.01) #Bei Gwen steht hier 0
+tree.full.control <- tree.control(nobs = dim(creditDataProcessed.train)[1], mincut=1, minsize = 2, mindev = 0.01)
 # This set of parameters produce (almost) the full tree ("saturated tree", the tree that fits the data perfectly).
 #   Notice:
-#     In the tree above (in 4.2), we set the tree.control() parameters to mincut = 2, minsize = 10, mindev = 0.01.
+#     In the tree above (in 4.2), we set the tree.control() parameters to mincut = 5, minsize = 10, mindev = 0.01.
 #     These parameters serve as a global threshold for growth, i.e, they stop the growth at a certain point, and the stop critera apply equally to all branches of the tree.
 #     In contrast, what we do now is cost complexity pruning: It takes the fully grown tree (no stop critera) and afterwards cuts back each branch.
 #     The cutting is *not* the same for all branches, but is done individually - in such a way as to minimize the overall RSS.
@@ -869,10 +883,8 @@ cv.tree.full = cv.tree(tree.full)
 
 cv.tree.full
 #   $size: number of terminal nodes of each tree
-#     Notice that the size is decreasing (corresponding to the pruning sequence).
 #   $dev: cross-validation deviance (RSS)
 #   $k: cost-complexity parameter (alpha)
-#     Notice that alpha is increasing (corresponding to the pruning sequence).
 ```
 ```{r message = FALSE, warning = FALSE}
 # Plot the cross-validation deviance as a function of size and alpha
@@ -888,10 +900,9 @@ mindev.idx <- which(cv.tree.full$dev == min(cv.tree.full$dev))
 (best.size <- min(cv.tree.full$size[mindev.idx]))
 #   The tree with 8 terminal nodes has lowest cross-validation error.
 
-# Now fit the pruned tree with alpha = 8
+# Now fit the pruned tree with alpha
 tree.pruned <- prune.tree(tree.full, best = best.size)
 # prune.tree determines the nested cost-complexity sequence  
-# best=8: get the 8-node tree in the cost-complexity sequence 
 
 summary(tree.pruned)
 ```
@@ -908,87 +919,83 @@ text(tree.pruned, cex=0.75) # cex: set character size to 0.75
 tree.pruned.predict <- predict(tree.pruned, creditDataProcessed.test)
 tree.pruned.predict.dev <- sum((tree.pruned.predict - creditDataProcessed.test$int_rate)^2)
 (tree.pruned.test.RMSE <- sqrt(tree.pruned.predict.dev/summary(tree.pruned)$df))
-# 299 (as compared to 200 in the tree from 4.2)
 ```
 
 ##############   6. Bagging (Bootstrap Aggregation)  ##########################
 ```{r message = FALSE, warning = FALSE}
-library(randomForest)
+#install.packages("ranger")
+library(ranger)
 #   Recall that bagging is just a special case of random forests with m = p.
-#   Thus, we can use the function randomForest() from the library randomForest for bagging also.
+#   Thus, we can use the function ranger() from the library ranger for bagging also.
 
 # Apply bagging  
 set.seed(1)
-(tree.bag <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry=28, importance =TRUE, ntree=10))
+(tree.bag <- ranger(int_rate ~ ., creditDataProcessed.train, mtry=28, importance = "none", num.trees=500))
 #   mtry = 28 means that we use all 28 predictors for each split of the tree - hence, do bagging.
 #   importance = TRUE says that variable importance should be assessed.
-#   ntree	... Number of trees to grow. This should not be set to too small a number, to ensure that every 
-#             input data point gets predicted at least a few times. 
+#   num.trees	... Number of trees to grow. This should not be set to too small a number, to ensure that every 
+#             input data point gets predicted at least a few times.
+```
+Evaluation:
+-The model has an R squared of about 0.41, which means approximately 41% of the variance in the interest rate (int_rate) is explained by the model. This isn't particularly high. In many real-world situations, especially with complex datasets, an R squared in this range may still be considered useful.
+-The OOB error is a form of cross-validation error, and without knowing the scale of int_rate, it's hard to say whether an MSE of 11.24591 is good or bad. If the interest rate typically varies between 0 and 100, this would be quite high; if it's in the thousands, it's relatively low.
+-The mtry parameter is set to 28, which means every split in every tree considered all 28 variables. This is unusual, as typically, mtry is set to a fraction of the total number of variables to ensure that the trees in the forest are de-correlated. You might want to consider using the default value for mtry which is the square root of the number of variables for classification tasks, or one-third of the number of variables for regression tasks.
 
 summary(tree.bag)
   # Lists the attributes of bag.all
-
+```{r message = FALSE, warning = FALSE}
 # Training error (RMSE) based on predictions 
-tree.bag.predict.train <- predict(tree.bag, creditDataProcessed.train) 
+tree.bag.predict.train <- predict(tree.bag, data = creditDataProcessed.train)
+# Check the structure of the prediction and the original interest rate
+str(tree.bag.predict.train)
+str(creditDataProcessed.train$int_rate)
+# Check for missing values
+sum(is.na(tree.bag.predict.train))
+sum(is.na(creditDataProcessed.train$int_rate))
+# Inspect the first few values
+head(tree.bag.predict.train)
+head(creditDataProcessed.train$int_rate)
   # We predict the data points of the training set using the ensemble.
   # Remember that these values are the *averaged* predictions of all trees in the ensemble. 
   # Each of the predicted data points was part of the training set of some of the trees.  
   # Thus, the error calculated from these predictions indeed corresponds to a classical "training error".
-(tree.bag.train.MSE <- mean((tree.bag.predict.train - creditDataProcessed.train$int_rate)^2))
+(tree.bag.train.MSE <- mean((tree.bag.predict.train$predictions - creditDataProcessed.train$int_rate)^2))
 (tree.bag.train.RMSE <- sqrt(tree.bag.train.MSE))
-#   113 - The training error is relatively small. Likely the ensemble is overfitting.
+#   1.35 - The training error is relatively small. Likely the ensemble is overfitting.
 ```
 # OOB error (RMSE)
-#   Recall that we actuaklly don't need to do cross validation for bagged trees to get a robust test error estimate.
-#   The OOB error is the qeuivalent of the cross validation error.
+# Recall that we actuaklly don't need to do cross validation for bagged trees to get a robust test error estimate.
+# The OOB error is the qeuivalent of the cross validation error.
 
 ```{r message = FALSE, warning = FALSE}
-valid_prediction <- !is.na(tree.bag$predicted)
-tree.bag$predicted
-#   bag.all$predicted holds the averaged predicted values of the input data based on out-of-bag samples. 
-#   I.e., only those trees are participating in the prediction for which the data point in question was NOT part of the training set.
-#   Thus, the error calculated from these predictions corresponds to a "CV test error".
-(tree.bag.OOB.MSE <- mean((tree.bag$predicted[valid_predictions] - creditDataProcessed.train$int_rate[valid_predictions])^2, na.rm = TRUE))
-(tree.bag.OOB.RMSE <- sqrt(tree.bag.OOB.MSE))
-#   286 - The OOB error is much higher, as expected.
-
-# Test error (RMSE)
-tree.bag.predict.test <- predict(tree.bag, creditDataProcessed.test)
-(tree.bag.test.MSE <- mean((tree.bag.predict.test - creditDataProcessed.test$int_rate)^2))
-mean(tree.bag.predict.test)
-(tree.bag.test.RMSE <- sqrt(tree.bag.test.MSE))
-#   321 - The test error is even higher.
-```
-
-```{r message = FALSE, warning = FALSE}
-# Variable Importance 
-importance(tree.bag)
-# Two measures are reported:
-#   1. %IncMSE        ... reports how much the average MSE (estimated with out-of-bag-CV) increase
-#                         over all trees when we randomly shuffle the values of this variable.
-#                         The higher %IncMSE, the more important the variable.
-#                         %IncMSE is a robust measure.
-#   2. IncNodePurity  ... reports the total increase in node impurity that results from splits 
-#                         over this variable, averaged over all trees.
-#                         It is measured using the loss function by which best splits are chosen, i.e., the MSE in regression trees.
-#                         The higher IncNodePurity, the more important the variable.
-#                         IncNodePurity is biased, %IncMSE is preferred.
-sort(importance(tree.bag)[,1], decreasing = T)
-#   CHits has highest %IncMSE, followed by CAtBat. This is consistent with the decision trees we grew in sections 4 and 5.
-(varImpPlot(tree.bag))
-#   Plot variables importance measures
-
-# Optimizing the ntree parameter
-plot(tree.bag)
-# Shows the OOB error convergence with growing number of trees.
-# Remember that Bagging does not overfit, so we can increase ntree as we like.
-# If you increase ntree, e.g. to 1000, you will see in the plot that the OOB 
-#   error stabilizes after 500 trees, so we dont need more than that.
-
-# Optimizing the mtry parameter
-#   The default for mtry is quite sensible so there is not really a need to change it. 
-#   To see if randomForest is a better option than bagging, just compare the OOB errors of both.
-#   There is a function tuneRF() for optimizing the mtry parameter, yet it may cause bias. 
+#Load or prepare your datasets. 
+#Example: creditDataProcessed.train and creditDataProcessed.test. 
+#Training of the Bagging model
+set.seed(1)
+tree.bag <- ranger(int_rate ~ ., data = creditDataProcessed.train, mtry = 28, importance = "none", num.trees = 500)
+ 
+# Model summary
+summary(tree.bag)
+ 
+# Making predictions on the training data and calculating the training error
+tree.bag.predict.train <- predict(tree.bag, data = creditDataProcessed.train)$predictions
+tree.bag.train.MSE <- mean((tree.bag.predict.train - creditDataProcessed.train$int_rate)^2)
+tree.bag.train.RMSE <- sqrt(tree.bag.train.MSE)
+ 
+# Calculation of the OOB (Out-Of-Bag) error
+valid_prediction <- !is.na(tree.bag$predictions)
+tree.bag.OOB.MSE <- mean((tree.bag$predictions[valid_prediction] - creditDataProcessed.train$int_rate[valid_prediction])^2, na.rm = TRUE)
+tree.bag.OOB.RMSE <- sqrt(tree.bag.OOB.MSE)
+ 
+# Making predictions on the test data and calculating the test error
+tree.bag.predict.test <- predict(tree.bag, data = creditDataProcessed.test)$predictions
+tree.bag.test.MSE <- mean((tree.bag.predict.test - creditDataProcessed.test$int_rate)^2)
+tree.bag.test.RMSE <- sqrt(tree.bag.test.MSE)
+ 
+# Printing the results
+cat("Train RMSE:", tree.bag.train.RMSE, "\n")
+cat("OOB RMSE:", tree.bag.OOB.RMSE, "\n")
+cat("Test RMSE:", tree.bag.test.RMSE, "\n")
 ```
 
 ##############   7. Random Forrests   ##########################
@@ -999,12 +1006,11 @@ plot(tree.bag)
 #     - p/3 variables when building a random forest of regression trees, and 
 #     - sqrt(p) variables when building a random forest of classification trees.
 
-# Building a random forest on the same data set using mtry = 19/3 = 6. 
-set.seed(1) 
-(tree.rf <- randomForest(Salary ~ ., Ht_nonas.train, mtry = 6, importance =TRUE, ntree=500))
+# Building a random forest on the same data set using mtry.
 ```{r message = FALSE, warning = FALSE}
 set.seed(1) 
-(tree.rf <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry = 28, importance =TRUE, ntree=10))
+(tree.rf <- randomForest(int_rate ~ ., creditDataProcessed.train, mtry = 28, importance =TRUE, ntree=10)) 
+# We took 10 trees because for 10 trees we needed 8 hours and for 500 trees we would have waited for days.
 valid_OOB_predictions <- !is.na(tree.rf$predicted)
 ```
 
@@ -1013,18 +1019,15 @@ valid_OOB_predictions <- !is.na(tree.rf$predicted)
 tree.rf.predict.train <- predict(tree.rf, creditDataProcessed.train)
 (tree.rf.train.MSE <- mean((tree.rf.predict.train - creditDataProcessed.train$int_rate)^2))
 (tree.rf.train.RMSE <- sqrt(tree.rf.train.MSE))
-#   116
 
 # OOB error (RMSE)
 (tree.rf.OOB.MSE <- mean((tree.rf$predicted[valid_OOB_predictions] - creditDataProcessed.train$int_rate[valid_OOB_predictions])^2, na.rm = TRUE))
 (tree.rf.OOB.RMSE <- sqrt(tree.rf.OOB.MSE))
-#   286
 
 # Test error (RMSE)
 tree.rf.predict.test <- predict(tree.rf, creditDataProcessed.train)
 (tree.rf.test.MSE <- mean((tree.rf.predict.test - creditDataProcessed.train$int_rate)^2))
 (tree.rf.test.RMSE <- sqrt(tree.rf.test.MSE))
-#   314
 
 # Variable Importance 
 importance(tree.rf)
@@ -1033,8 +1036,6 @@ sort(importance(tree.rf)[,1], decreasing = T)
 
 # Optimizing the ntree parameter
 plot(tree.rf)
-  # We see that the OOB error stabilizes after 500 trees 
-  # (you can put in ntree=1000 above and see this), so no need to use more than 500.
 ```
 
 
@@ -1050,19 +1051,17 @@ set.seed (1)
 ```{r message = FALSE, warning = FALSE}
 creditDataProcessedFactorised <- creditDataProcessed
 
-# Angenommen, Ihre Daten befinden sich in einem DataFrame namens 'data' und die Variable heißt 'Combo'
-# 1. Ermitteln der Häufigkeiten
+# 1. discover the  frequency
 freq_table <- table(creditDataProcessedFactorised$Combo)
-# 2. Filtern Sie Kategorien heraus, die nur einmal vorkommen
+# 2. Filtering the categories which occur just once
 rare_categories <- names(freq_table[freq_table == 1])
-# 3. Aktualisieren Sie die 'Combo'-Variable
-# Hier entfernen wir die seltenen Kategorien, indem wir sie durch NA ersetzen
+# 3. Update the 'Combo'-Variable
+# Here we are removing the rarely occuring categories and replacing them ith NA
 creditDataProcessedFactorised$Combo <- ifelse(creditDataProcessedFactorised$Combo %in% rare_categories, "Other", creditDataProcessedFactorised$Combo)
-# Optional: Konvertieren Sie 'Combo' wieder in einen Faktor, wenn nötig
 creditDataProcessedFactorised$Combo <- factor(creditDataProcessedFactorised$Combo)
 
 
-cols_to_factorise <- c("home_ownership", "verification_status", "purpose","title","zip_code","addr_state","earliest_cr_line","initial_list_status","last_credit_pull_d","application_type","Combo" )  # Ersetzen Sie diese mit den tatsächlichen Spaltennamen
+cols_to_factorise <- c("home_ownership", "verification_status", "purpose","title","zip_code","addr_state","earliest_cr_line","initial_list_status","last_credit_pull_d","application_type","Combo" )  
 creditDataProcessedFactorised[cols_to_factorise] <- lapply(creditDataProcessedFactorised[cols_to_factorise], as.factor)
 
 train_indx2 <- sample(1:nrow(creditDataProcessedFactorised), 0.7*nrow(creditDataProcessedFactorised))
