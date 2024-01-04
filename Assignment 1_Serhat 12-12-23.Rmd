@@ -997,6 +997,11 @@ cat("Train RMSE:", tree.bag.train.RMSE, "\n")
 cat("OOB RMSE:", tree.bag.OOB.RMSE, "\n")
 cat("Test RMSE:", tree.bag.test.RMSE, "\n")
 ```
+Evaluation:
+-Train RMSE: 1.356286: The RMSE on the training dataset, which is relatively low, suggesting that the model fits the training data well.
+-OOB RMSE: 3.353493: The RMSE calculated on the out-of-bag samples, which are the data points that were not included in the bootstrap sample for building each tree. This is higher than the training RMSE, indicating the model may not perform as well on unseen data.
+-Test RMSE: 3.336366: The RMSE on a separate test dataset. It is close to the OOB RMSE, which suggests that the OOB error is a good estimate of the test error and that the model's performance is consistent on unseen data.
+In summary, the model has been trained on a large dataset and seems to perform well on the training data, but with an increase in error when predicting unseen data (OOB and test data). This could indicate some overfitting to the training data. However, the consistency between OOB and test RMSEs is a good sign, indicating that the model is likely generalizing as expected.
 
 ##############   7. Random Forrests   ##########################
 
@@ -1099,10 +1104,10 @@ tree.boost.predict.test <- predict(tree.boost, creditDataProcessedFactorised.tes
 summary(tree.boost)
 # outputs the variable importance as a table and a plot
 #   rel.inf ... relative variable importance ("permutation importance"), same as %IncMSE used for random forests.
-#             It measures the importance of a predictor by the average increase in prediction error when the values  
-#             of a given predictor are shuffled (permuted). The values are normalized so that they add up to 100%.
+#   It measures the importance of a predictor by the average increase in prediction error when the values  
+#   of a given predictor are shuffled (permuted). The values are normalized so that they add up to 100%.
 #   If you dont see a variable in your plot, expand the plot window.
-# We have different variables on top here...
+#  We have different variables on top here...
 
 
 
